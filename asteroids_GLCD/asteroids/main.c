@@ -62,9 +62,11 @@ int main (int argc, char* args[]) {
 	int sleep = 0;
 	int quit = 0;
 	SDL_Event event;
+	//TODO: change game ticks to timer
 	Uint32 next_game_tick = SDL_GetTicks();
 	
 	//render loop
+	//TODO: change render loop to polling/display portions, use timer for when to render
 	while(quit == 0) {
 		
 		//check for new events every frame
