@@ -134,7 +134,7 @@ void update_asteroids(AsteroidNode* asteroids, Vector size, float dt) {
         node->value->angle += ASTEROID_ROTATION_SPEED * dt;
     }
 }
-
+//TODO: change this so that it doesn't use allegro
 void draw_asteroids(AsteroidNode* n) {
     ALLEGRO_TRANSFORM trans;
     for(; n != NULL; n = n->next) {
