@@ -1,4 +1,4 @@
-
+//TODO: replace SDL stuff with GLCD/displayengine code -- use frame buffer (Brendan already made something like this?) 
 //main.c
 
 //Using SDL and standard IO
@@ -23,7 +23,7 @@ struct player p;				//The player
 struct player lives[LIVES];			//Player lives left
     
 int main (int argc, char* args[]) {
-
+	//TODO: switch out SDL for LCD window, screen buffer
 	//SDL Window setup
 	if (init(SCREEN_WIDTH, SCREEN_HEIGHT) == 1) {
 		
@@ -209,6 +209,7 @@ int main (int argc, char* args[]) {
 int init(int width, int height) {
 
 	//Initialize SDL
+	//TODO: change to initialize LCD/display engine
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
