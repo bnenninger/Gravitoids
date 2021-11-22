@@ -10,14 +10,16 @@ int length;
 //text used for displaying lives
 char text[32];
 //asteroid x, y, color data
-static int asteroid_x_data[9] =
+static int asteroid_x_data[1] =
     {0};
-static int asteroid_y_data[9] =
+static int asteroid_y_data[1] =
     {0};
-static uint16_t asteroid_color_data[9] =
+static uint16_t asteroid_color_data[1] =
     {White};
-static uint16_t asteroid_clear_data[9] =
+static uint16_t asteroid_clear_data[1] =
     {Black};
+static uint16_t asteroid_trail_color_data[1] =
+    {Magenta};
 
 //note: all sprite data should be read bottom-up -- the first line is the lowest one on the actual sprite
 
@@ -94,7 +96,7 @@ void update_display(void)
                 //updating the position, so reset the flag
                 sprites[i].position_updated = 0;
                 //clear the previous sprite
-                LCD_clear_sprite(&(sprites[i]));
+                //LCD_clear_sprite(&(sprites[i]));
             }
             //draw the sprite
             LCD_draw_sprite(&(sprites[i]));
@@ -168,6 +170,8 @@ void initialize_asteroid(int x, int y)
     sprites[sprite_counter].block_color_data_2 = asteroid_color_data;
     sprites[sprite_counter].blockout_color_data = asteroid_clear_data;
     sprites[sprite_counter].position_updated = 0;
+		//sprites[sprite_counter].leave_trail = 0;
+		//sprites[sprite_counter].trail_color_data = asteroid_trail_color_data;
     //update sprite_counter
     sprite_counter++;
 }

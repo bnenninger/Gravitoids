@@ -9,7 +9,11 @@
 .\objects\director.o: C:\Users\Kassie\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h
 .\objects\director.o: ..\source_code\GLCD.h
 .\objects\director.o: ..\source_code\director.h
+.\objects\director.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\director.o: ..\source_code\vector.h
 .\objects\director.o: ..\source_code\display_engine.h
 .\objects\director.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\director.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h
 .\objects\director.o: ..\source_code\sound.h
+.\objects\director.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\director.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

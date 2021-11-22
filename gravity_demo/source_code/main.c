@@ -38,7 +38,7 @@ int main(void)
   //initialize timer to trigger every 10 ms
   init_timer0(10);
   //initialize sound engine
-  DACInit();
+  //DACInit();
   //initialize LCD, print "waiting for start message"
   // Initialize graphical LCD
   LCD_Initialization(); 
@@ -58,6 +58,7 @@ int main(void)
     {
       //reset counter to 0
       frame_counter = 0;
+			half_seconds_counter = 0;
       //display new frame
       update_place_space();
     }

@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>hw3</OutputName>
+          <OutputName>gravity</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -381,57 +381,17 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>New Group</GroupName>
           <Files>
             <File>
               <FileName>AsciiLib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Source_Code\AsciiLib.c</FilePath>
+              <FilePath>..\source_code\AsciiLib.c</FilePath>
             </File>
             <File>
               <FileName>AsciiLib.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\Source_Code\AsciiLib.h</FilePath>
-            </File>
-            <File>
-              <FileName>GLCD.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Source_Code\GLCD.c</FilePath>
-            </File>
-            <File>
-              <FileName>GLCD.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Source_Code\GLCD.h</FilePath>
-            </File>
-            <File>
-              <FileName>Retarget.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Source_Code\Retarget.c</FilePath>
-            </File>
-            <File>
-              <FileName>Serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Source_Code\Serial.c</FilePath>
-            </File>
-            <File>
-              <FileName>Serial.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Source_Code\Serial.h</FilePath>
-            </File>
-            <File>
-              <FileName>display_engine.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\display_engine.c</FilePath>
-            </File>
-            <File>
-              <FileName>display_engine.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source_code\display_engine.h</FilePath>
-            </File>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\main.c</FilePath>
+              <FilePath>..\source_code\AsciiLib.h</FilePath>
             </File>
             <File>
               <FileName>director.c</FileName>
@@ -444,14 +404,54 @@
               <FilePath>..\source_code\director.h</FilePath>
             </File>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>display_engine.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\source_code\timer.c</FilePath>
+              <FilePath>..\source_code\display_engine.c</FilePath>
             </File>
             <File>
-              <FileName>timer.h</FileName>
+              <FileName>display_engine.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\source_code\timer.h</FilePath>
+              <FilePath>..\source_code\display_engine.h</FilePath>
+            </File>
+            <File>
+              <FileName>GLCD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\GLCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLCD.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source_code\GLCD.h</FilePath>
+            </File>
+            <File>
+              <FileName>joystick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\joystick.c</FilePath>
+            </File>
+            <File>
+              <FileName>joystick.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source_code\joystick.h</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>Retarget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\Retarget.c</FilePath>
+            </File>
+            <File>
+              <FileName>Serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\Serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>Serial.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source_code\Serial.h</FilePath>
             </File>
             <File>
               <FileName>sound.c</FileName>
@@ -462,6 +462,26 @@
               <FileName>sound.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\source_code\sound.h</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source_code\timer.h</FilePath>
+            </File>
+            <File>
+              <FileName>vector.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\vector.c</FilePath>
+            </File>
+            <File>
+              <FileName>vector.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source_code\vector.h</FilePath>
             </File>
           </Files>
         </Group>

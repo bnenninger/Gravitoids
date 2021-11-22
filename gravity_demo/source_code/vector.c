@@ -5,6 +5,10 @@
 #include <math.h>
 #include "vector.h"
 
+struct vector2d result;
+float matrix[2][2];
+float x, y, ratio, angle, sine, cosine;
+
 void add_vector(struct vector2d* a, struct vector2d* b) {
 
 	a->x += b->x;
@@ -13,9 +17,10 @@ void add_vector(struct vector2d* a, struct vector2d* b) {
 
 struct vector2d add_vector_new(struct vector2d* a, struct vector2d* b) {
 
-	struct vector2d new = {a->x + b->x, a->y + b->y};
+	result.x = a->x + b->x;
+	result.y = a->y + b->y;
 
-	return new;
+	return result;
 }
 
 void multiply_vector(struct vector2d* v, float n) {
@@ -55,7 +60,7 @@ void limit_vector(struct vector2d* v, float limit) {
 
 	if (mag > limit) {
 		
-		float ratio = limit / mag;
+		ratio = limit / mag;
 		v->x *= ratio;
 		v->y *= ratio;
 	}
@@ -64,15 +69,19 @@ void limit_vector(struct vector2d* v, float limit) {
 void rotate_vector(struct vector2d* v, float degrees) {
 	
 	//calculate radians
-	float angle = degrees * M_PI / 180;
-	float sine = sin(angle);
-	float cosine = cos(angle);
+	angle = degrees * 3.14159265 / 180;
+	sine = sin(angle);
+	cosine = cos(angle);
 	
 	//rotation matix
-	float matrix[2][2] = {{cosine, -sine}, {sine, cosine}};
+	matrix[0][0] = cosine;
+	matrix[0][1] = -sine;
+	matrix[1][0] = sine;
+	matrix[1][1] = cosine;
+	//matrix[2][2] = {{cosine, -sine}, {sine, cosine}};
 
-	float x = v->x;
-	float y = v->y;
+	x = v->x;
+	y = v->y;
 
 	v->x = matrix[0][0] * x + matrix[0][1] * y;
         v->y = matrix[1][0] * x + matrix[1][1] * y;
