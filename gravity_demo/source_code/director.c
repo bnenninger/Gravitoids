@@ -68,7 +68,11 @@ void update_sprite(uint32_t object_index)
 	int y_position;
 	x_position = round(game_object_array[object_index].displacement.x - check_width(game_object_array[object_index].sprite_index) / 2.0);
 	y_position = round(game_object_array[object_index].displacement.y - check_height(game_object_array[object_index].sprite_index) / 2.0);
-	update_sprite_position(game_object_array[object_index].sprite_index, x_position, y_position);
+	if (x_position != check_x_pos(game_object_array[object_index].sprite_index) || y_position != check_y_pos(game_object_array[object_index].sprite_index))
+	{
+		update_sprite_position(game_object_array[object_index].sprite_index, x_position, y_position);
+	}
+	
 }
 void update_objects(void)
 {

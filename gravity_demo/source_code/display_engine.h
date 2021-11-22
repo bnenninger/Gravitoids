@@ -22,6 +22,7 @@ struct SPRITE
     uint16_t *block_color_data;    //color data for each block
     uint16_t *block_color_data_2;  //color data for each block (optional extra palet)
     uint16_t *blockout_color_data; //color data for each block (optional extra palet)
+    uint8_t position_updated; //whether the position of the sprite has been updated
 };
 void LCD_draw_block(int x, int y, uint16_t color);
 void LCD_draw_sprite(struct SPRITE *sprite); //use pointer for faster implementation

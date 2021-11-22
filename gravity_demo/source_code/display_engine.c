@@ -11,25 +11,14 @@ int length;
 char text[32];
 //asteroid x, y, color data
 static int asteroid_x_data[9] =
-    {
-        0, 1, 2,
-        0, 1, 2,
-        0, 1, 2};
+    {0};
 static int asteroid_y_data[9] =
-    {
-        0, 0, 0,
-        1, 1, 1,
-        2, 2, 2};
+    {0};
 static uint16_t asteroid_color_data[9] =
-    {
-        Black, Black, Black,
-        Black, White, Black,
-        Black, Black, Black};
+    {White};
 static uint16_t asteroid_clear_data[9] =
-    {
-        Black, Black, Black,
-        Black, Black, Black,
-        Black, Black, Black};
+    {Black};
+
 //note: all sprite data should be read bottom-up -- the first line is the lowest one on the actual sprite
 
 
@@ -100,16 +89,22 @@ void update_display(void)
     {
         if (sprites[i].visible == 1) //draw sprite if visible
         {
-
+            if (sprites[i].position_updated)
+            {
+                //updating the position, so reset the flag
+                sprites[i].position_updated = 0;
+                //clear the previous sprite
+                LCD_clear_sprite(&(sprites[i]));
+            }
+            //draw the sprite
             LCD_draw_sprite(&(sprites[i]));
+            
         }
         else if (sprites[i].to_clear != 0) //clear sprite if you should
         {
             LCD_clear_sprite(&(sprites[i]));
         }
     }
-    //display lives counter in corner
-    display_lives();
 }
 //access function so director can change a sprite's visibility value (0=invisible, 1 = visible)
 void update_sprite_visibility(int sprite_index, int visibility)
@@ -131,6 +126,7 @@ void update_sprite_position(int sprite_index, int x, int y)
 {
     sprites[sprite_index].x = x;
     sprites[sprite_index].y = y;
+    sprites[sprite_index].position_updated = 1;
 }
 //access function so director can get sprite at index's x coord
 int check_x_pos(int sprite_index)
@@ -162,15 +158,16 @@ void initialize_asteroid(int x, int y)
     sprites[sprite_counter].y = y;
     sprites[sprite_counter].visible = 0; //by default invisible
     sprites[sprite_counter].to_clear = 0;
-    sprites[sprite_counter].width = 3;            //width is 3 since it includes blank-out area
-    sprites[sprite_counter].height = 3;           //height is 3 since it includes blank-out area
-    sprites[sprite_counter].number_of_blocks = 9; //3x3, with 1 white in middle, all black outside
+    sprites[sprite_counter].width = 1;            
+    sprites[sprite_counter].height = 1;           
+    sprites[sprite_counter].number_of_blocks = 1;
     sprites[sprite_counter].color_palet = 0;
     sprites[sprite_counter].block_x_data = asteroid_x_data;
     sprites[sprite_counter].block_y_data = asteroid_y_data;
     sprites[sprite_counter].block_color_data = asteroid_color_data;
     sprites[sprite_counter].block_color_data_2 = asteroid_color_data;
     sprites[sprite_counter].blockout_color_data = asteroid_clear_data;
+    sprites[sprite_counter].position_updated = 0;
     //update sprite_counter
     sprite_counter++;
 }
