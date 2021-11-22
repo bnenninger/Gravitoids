@@ -81,6 +81,7 @@ void initialize_display_engine(void)
     //initialize asteroids
     initialize_asteroid(30, 20);
     initialize_asteroid(60, 40);
+		initialize_asteroid(MAX_X_COORD / 2, MAX_Y_COORD / 2);
 }
 //called by director to update the display whenever a new frame is ready to be drawn
 void update_display(void)

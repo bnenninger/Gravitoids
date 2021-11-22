@@ -184,38 +184,50 @@ void print_object_values(void)
 }
 void start_game(void)
 {
-	struct vector2d displacement_0, velocity_0, acceleration_0, displacement_1, velocity_1, acceleration_1;
-	float mass_0, mass_1;
-	uint8_t movable_0, movable_1;
+	struct vector2d displacement_0, velocity_0, acceleration_0, displacement_1, velocity_1, acceleration_1,
+		displacement_2, velocity_2, acceleration_2;
+	float mass_0, mass_1, mass_2;
+	uint8_t movable_0, movable_1, movable_2;
 	game_object_counter = 0;
 	//astroid object 0
-	displacement_0.x = 50.4;
-	displacement_0.y = 40.4;
-	velocity_0.x = .1;
-	velocity_0.y = .1;
+	displacement_0.x = 10.4;
+	displacement_0.y = 20.4;
+	velocity_0.x = -0.1;
+	velocity_0.y = -0.1;
 	acceleration_0.x = 0.0;
 	acceleration_0.y = 0.0;
-	mass_0 = .1;
-	movable_0 = 0;
+	mass_0 = .01;
+	movable_0 = 1;
 	//astroid object 1
 	displacement_1.x = 60.5;
-	displacement_1.y = 40.5;
+	displacement_1.y = 30.5;
 	velocity_1.x = .1;
 	velocity_1.y = .1;
 	acceleration_1.x = 0.0;
 	acceleration_1.y = 0.0;
 	mass_1 = .1;
 	movable_1 = 1;
+	//astroid object 2 (unmovable
+	displacement_2.x = MAX_X_COORD / 2;
+	displacement_2.y = MAX_Y_COORD / 2;
+	velocity_2.x = 0.0;
+	velocity_2.y = 0.0;
+	acceleration_2.x = 0.0;
+	acceleration_2.y = 0.0;
+	mass_2 = .1;
+	movable_2 = 0;
 	
 	//initialize the display engine
 	initialize_display_engine();
 	//set visibilities for two asteroids
 	update_sprite_visibility(0, 1);
 	update_sprite_visibility(1, 1);
+	update_sprite_visibility(2, 1);
 	//initialize two asteroid objects
 	
 	//initialize them using the initialization function
 	initialize_object(0, &displacement_0, &velocity_0, &acceleration_0, mass_0, movable_0);
 	initialize_object(1, &displacement_1, &velocity_1, &acceleration_1, mass_1, movable_1);
+	initialize_object(2, &displacement_2, &velocity_2, &acceleration_2, mass_2, movable_2);
 	//ready
 }

@@ -4,7 +4,7 @@
 // which I think had some errors: when programmed to measure a second, the example
 // was running a bit faster; I think, here with the changes, it does measure just
 // 1 second  now;
-#define TICKS_PER_FRAME 4
+#define TICKS_PER_FRAME 2
 #include "lpc17xx.h"
 #include "timer.h"
 
