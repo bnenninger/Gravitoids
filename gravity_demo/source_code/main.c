@@ -15,17 +15,13 @@
 volatile uint32_t timer0_counter = 0;
 volatile uint32_t seconds_counter = 0;
 volatile uint32_t half_seconds_counter = 0;
+volatile uint32_t frame_counter = 0;
 //to display to LCD
 char lcd_text[50];
 //control-related variables
 uint8_t direction;
 char keyboard_input;
-int poll_counter = 8;
-int joystick_input;
-int push_button_input;
-//functions
-int read_push_button();
-void InitPushButton();
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -85,11 +81,11 @@ int main(void)
         direction = UP;
       }
     }
-    //use timer half-seconds variable to see if you should draw new frame
-    if (half_seconds_counter > 0)
+    //use timer frame_counter variable to see if you should draw new frame
+    if (frame_counter > 0)
     {
       //reset counter to 0
-      half_seconds_counter = 0;
+      frame_counter = 0;
       //display new frame
       update_place_space();
     }
