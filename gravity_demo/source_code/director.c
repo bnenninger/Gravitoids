@@ -4,157 +4,155 @@
 #include "display_engine.h"
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include "sound.h"
+#include "vector.h"
 //game variables
-//number of lives left
-extern int lives;
-//snake body length
-extern int length;
-//head and previous head positions
-int head_position_x;
-int head_position_y;
-int prev_head_pos_x;
-int prev_head_pos_y;
-//movement direction, 0 left, 1 up, 2 right, 3 down
-extern uint8_t direction;
+//game object array
+struct GAME_OBJECT game_object_array[GAME_OBJECT_NUM];
+uint32_t game_object_counter = 0;
+//vector used for summing
 
-uint8_t mice_ate_consecutively;
 
 //functions
-//see if snake ate mouse
-int update_mouse(void)
+//calculate acceleration due to gravity -- NOT FORCE
+struct vector2d calculate_gravity(uint32_t affected_object_index, uint32_t cause_object_index)
 {
-	//check if snake got the mouse
-	if (head_position_x == check_x_pos(MOUSE) && head_position_y == check_y_pos(MOUSE))
+	struct vector2d radius_vector;
+	struct vector2d gravity_vector;
+	float gravity_magnitude;
+	float radius_magnitude;
+	radius_vector = 
 	{
-		//snake ate mouse, increase lives and length of snake, respawn mouse
-		mice_ate_consecutively++;
-		//if snake got 2 in a row
-		if (mice_ate_consecutively > 1)
-		{
-			//increase lives
-			lives++;
-			//reset consecutive counter
-			mice_ate_consecutively = 0;
-			//play life gained sound
-			play_sound();
-		}
-		//increase length
-		length++;
-
-		//make another piece of snake visible
-		if (length < MOUSE)
-		{
-			update_sprite_visibility(length, 1);
-		}
-
-		//respawn it somewhere else
-		update_sprite_position(MOUSE, rand() % (MAX_X_COORD + 1), rand() % (MAX_Y_COORD + 1));
-		//snake ate mouse, return 1
-		return 1;
-	}
-	//snake did not eat mouse, return 0
-	return 0;
+		game_object_array[cause_object_index].displacement.x - game_object_array[affected_object_index].displacement.x,
+		game_object_array[cause_object_index].displacement.y - game_object_array[affected_object_index].displacement.y
+	};
+	//calculate magnitude of gravity vector
+	gravity_magnitude = GRAVITATIONAL_CONSTANT * game_object_array[cause_object_index].mass / magnitude_vector(&radius_vector);
+	//calculate direction of gravity vector
+	gravity_vector = gravity_magnitude * normalise_vector(&radius_vector);
+	return gravity_vector;
 }
-//move the snake in the current direction
-void move_snake(void)
+//updates the object's acceleration based on the gravity of the objects around it
+void update_acceleration(uint32_t object_index)
 {
 	int i;
-	head_position_x = check_x_pos(0);
-	head_position_y = check_y_pos(0);
-	prev_head_pos_x = head_position_x;
-	prev_head_pos_y = head_position_y;
-	//move snake in chosen direction if possible, if not, decrease lives
-	if (direction == LEFT && head_position_x > 0)
+	game_object_array[object_index].acceleration = {0.0,0.0};
+	
+	//sum all forces of gravity on the object to get the acceleration
+	for (i = 0; i < object_index; i++)
 	{
-		//move left
-		head_position_x--;
-		update_sprite_position(0, head_position_x, head_position_y);
+		add_vector(&(game_object_array[object_index].acceleration), &(calculate_gravity(object_index, i)));
 	}
-	else if (direction == RIGHT && head_position_x < MAX_X_COORD)
+	//skip the object itself
+	for (i = object_index + 1; i < game_object_counter; i++)
 	{
-		//move right
-		head_position_x++;
-		update_sprite_position(0, head_position_x, head_position_y);
+		add_vector(&(game_object_array[object_index].acceleration), &(calculate_gravity(object_index, i)));
 	}
-	else if (direction == UP && head_position_y > 0)
+}
+//updates the object's velocity based on its current acceleration
+void update_velocity(uint32_t object_index)
+{
+	//add acceleration directly
+	add_vector(&(game_object_array[object_index].velocity), &(game_object_array[object_index].acceleration));
+}
+void update_displacement(uint32_t object_index)
+{
+	//add velocity directly
+	add_vector(&(game_object_array[object_index].displacement), &(game_object_array[object_index].velocity));
+}
+void update_sprite(uint32_t object_index)
+{
+	//x and y positions for sprites are top, left corner, but for objects are middle
+	int x_position;
+	int y_position;
+	x_position = round(game_object_array[object_index].displacement.x - check_width(game_object_array[object_index].sprite_index) / 2.0);
+	y_position = round(game_object_array[object_index].displacement.y - check_height(game_object_array[object_index].sprite_index) / 2.0);
+	update_sprite_position(game_object_array[object_index].sprite_index, x_position, y_position);
+}
+void update_objects(void)
+{
+	int i;
+	//update accelerations
+	for (i = 0; i < game_object_counter; i++)
 	{
-		//move up
-		head_position_y--;
-		update_sprite_position(0, head_position_x, head_position_y);
+		if (game_object_array[i].movable)
+		{
+			//update acceleration of this object
+			update_acceleration(i);
+		}
 	}
-	else if (direction == DOWN && head_position_y < MAX_Y_COORD)
+	//update velocities
+	for (i = 0; i < game_object_counter; i++)
 	{
-		//move left
-		head_position_y++;
-		update_sprite_position(0, head_position_x, head_position_y);
+		if (game_object_array[i].movable)
+		{
+			//update the velocity of this object
+			update_velocity(i);
+		}
 	}
-	else
+	//update displacements and sprite positions
+	for (i = 0; i < game_object_counter; i++)
 	{
-		//reset mice ate consecutively
-		mice_ate_consecutively = 0;
-		//lose life
-		lives--;
-		//beep to signify life lost
-		play_sound_2();
-		//don't need to update rest of snake, did not move
-		return;
+		if (game_object_array[i].movable)
+		{
+			//update the displacement of this object
+			update_displacement(i);
+			update_sprite(i);
+		}
 	}
-	if (!update_mouse())
-	{
-		//if mouse not eaten
-		//update the position of the snake's trail
-		update_sprite_position(TRAIL, check_x_pos(length), check_y_pos(length));
-	}
-	//update the rest of the snake accordingly, minus the last body piece
-	for (i = length; i > 1; i--)
-	{
-		update_sprite_position(i, check_x_pos(i - 1), check_y_pos(i - 1));
-	}
-	//update the last body piece
-	update_sprite_position(1, prev_head_pos_x, prev_head_pos_y);
+}
+void initialize_object(uint32_t sprite_index, struct vector2d* displacement, struct vector2d* velocity, struct vector2d* acceleration, uint32_t mass, uint8_t movable)
+{
+	//assign to sprite
+	game_object_array[game_object_counter].sprite_index = sprite_index;
+	//assign displacement
+	game_object_array[game_object_counter].displacement.x = displacement->x;
+	game_object_array[game_object_counter].displacement.y = displacement->y;
+	//assign velocity
+	game_object_array[game_object_counter].velocity.x = velocity->x;
+	game_object_array[game_object_counter].velocity.y = velocity->y;
+	//assign acceleration
+	game_object_array[game_object_counter].acceleration.x = acceleration->x;
+	game_object_array[game_object_counter].acceleration.y = acceleration->y;
+	//assign mass
+	game_object_array[game_object_counter].mass = mass;
+	//select if this object should move or not (should the position be updated?) 0 = don't move, 1 = do move
+	game_object_array[game_object_counter].movable = movable;
+	//increment game object counter
+	game_object_counter++;
 }
 //this function will be called whenever you want to draw a new frame
 void update_place_space(void)
 {
-	if (lives < 1)
-	{
-		//display "GAME OVER"
-		display_lose();
-	}
-	else if (lives > 5)
-	{
-		//display "YOU WIN"
-		display_win();
-	}
-	else
-	{
-		//move the snake, see if it eats mouse
-		move_snake();
-
-		//update the display
-		update_display();
-	}
+	//update the objects
+	update_objects();
+	//update the display
+	update_display();
 }
 void start_game(void)
 {
-	//set mice ate consecutively
-	mice_ate_consecutively = 0;
-	//set lives to initial value
-	lives = INITIAL_LIVES;
-	//set initial movement direction to up
-	direction = UP;
+	
 	//initialize the display engine
 	initialize_display_engine();
-	//set visibilities for head, 3 body parts
+	//set visibilities for two asteroids
 	update_sprite_visibility(0, 1);
 	update_sprite_visibility(1, 1);
-	update_sprite_visibility(2, 1);
-	update_sprite_visibility(3, 1);
-	//set visibility for mouse
-	update_sprite_visibility(MOUSE, 1);
-	//set visibility of snake trail
-	update_sprite_visibility(TRAIL, 1);
-	//set mouse position randomly
-	update_sprite_position(MOUSE, rand() % (MAX_X_COORD + 1), rand() % (MAX_Y_COORD + 1));
+	//initialize two asteroid objects
+	//astroid object 0
+	struct vector2d displacement_0 = {30.5, 20.5};
+	struct vector2d velocity_0 = {.1, .1};
+	struct vector2d acceleration_0 = {0, 0};
+	float mass_0 = 1.5;
+	uint8_t movable_0 = 1;
+	//astroid object 1
+	struct vector2d displacement_1 = {60.5, 40.5};
+	struct vector2d velocity_1 = {.1, .1};
+	struct vector2d acceleration_1 = {0, 0};
+	float mass_1 = 0.7;
+	uint8_t movable_1 = 1;
+	//initialize them using the initialization function
+	initialize_object(0, &displacement_0, &velocity_0, &acceleration_0, mass_0, movable_0);
+	initialize_object(1, &displacement_1, &velocity_1, &acceleration_1, mass_1, movable_1);
+	//ready
 }

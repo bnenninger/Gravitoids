@@ -9,49 +9,30 @@ int lives;
 int length;
 //text used for displaying lives
 char text[32];
-
-//snake body, head, and trail part sprite data
+//asteroid x, y, color data
+static int asteroid_x_data[9] =
+    {
+        0, 1, 2,
+        0, 1, 2,
+        0, 1, 2};
+static int asteroid_y_data[9] =
+    {
+        0, 0, 0,
+        1, 1, 1,
+        2, 2, 2};
+static uint16_t asteroid_color_data[9] =
+    {
+        Black, Black, Black,
+        Black, White, Black,
+        Black, Black, Black};
+static uint16_t asteroid_clear_data[9] =
+    {
+        Black, Black, Black,
+        Black, Black, Black,
+        Black, Black, Black};
 //note: all sprite data should be read bottom-up -- the first line is the lowest one on the actual sprite
 
-static int body_part_x_data[1] =
-    {0};
-static int body_part_y_data[1] =
-    {0};
-static uint16_t body_part_color_data[1] =
-    {Green};
-//the trailing part deletes the last piece when the snake moves, should be displayed FIRST
-static uint16_t trailing_part_color_data[1] =
-    {Black};
-//head should be displayed LAST
-static uint16_t head_color_data[1] =
-    {Red};
 
-//mouse sprite data
-//note: all sprite data should be read bottom-up -- the first line is the lowest one on the actual sprite
-
-static int mouse_x_data[1] =
-    {0};
-static int mouse_y_data[1] =
-    {0};
-static uint16_t mouse_color_data[1] =
-    {Magenta};
-
-//display the number of lives left on the LCD display
-void display_win()
-{
-    sprintf(text, "YOU WIN!");
-    LCD_PutText(WIN_MESSAGE_X_POS, WIN_MESSAGE_Y_POS, text, White, Black);
-}
-void display_lose()
-{
-    sprintf(text, "YOU LOSE!");
-    LCD_PutText(WIN_MESSAGE_X_POS, WIN_MESSAGE_Y_POS, text, White, Black);
-}
-void display_lives()
-{
-    sprintf(text, "Lives: %d", lives);
-    LCD_PutText(LIVES_X_POS, LIVES_Y_POS, text, White, Black);
-}
 //Draw BLOCK_SIZE*BLOCK_SIZE block on LCD at coords y and x (switched to match horizontal game implementation for easy use, inputs should be x, y)
 void LCD_draw_block(int x, int y, uint16_t color) //orientation changed in GLCD, don't worry about it
 {
@@ -106,17 +87,9 @@ void initialize_display_engine(void)
     int i;
     sprite_counter = 0;
     LCD_Clear(Black); // Clear graphical LCD display
-    //initialize all the snake's parts invisibly
-    //initialize head
-    initialize_head(SNAKE_STARTING_X, SNAKE_STARTING_Y);
-    //initialize body parts so they're folowing each other
-    for (i = 0; i < MAX_NUM_BODY_PARTS; i++)
-        initialize_body_part(check_x_pos(sprite_counter - 1) - 1, check_y_pos(sprite_counter - 1));
-    //initialize the mouse
-    initialize_mouse(9, 0);
-    //initialize the snake trail at position to left of farthest one
-    length = 3;
-    initialize_trail(check_x_pos(length) - 1, check_y_pos(length));
+    //initialize asteroids
+    initialize_asteroid(30, 20);
+    initialize_asteroid(60, 40);
 }
 //called by director to update the display whenever a new frame is ready to be drawn
 void update_display(void)
@@ -169,84 +142,35 @@ int check_y_pos(int sprite_index)
 {
     return sprites[sprite_index].y;
 }
+int check_width(int sprite_index)
+{
+    return sprites[sprite_index].width;
+}
+int check_height(int sprite_index)
+{
+    return sprites[sprite_index].height;
+}
 //access function so director can switch the color palette of the sprite at the index to the other one
 void update_sprite_palet(int sprite_index)
 {
     sprites[sprite_index].color_palet ^= 1; //xor with 1 means swap between 1 and 0
 }
-void initialize_head(int x, int y)
+void initialize_asteroid(int x, int y)
 {
     //set coordinates, colors, number of blocks, other palletes, visibility
     sprites[sprite_counter].x = x;
     sprites[sprite_counter].y = y;
     sprites[sprite_counter].visible = 0; //by default invisible
     sprites[sprite_counter].to_clear = 0;
-    sprites[sprite_counter].width = 1;
-    sprites[sprite_counter].height = 1;
-    sprites[sprite_counter].number_of_blocks = 1;
+    sprites[sprite_counter].width = 3;            //width is 3 since it includes blank-out area
+    sprites[sprite_counter].height = 3;           //height is 3 since it includes blank-out area
+    sprites[sprite_counter].number_of_blocks = 9; //3x3, with 1 white in middle, all black outside
     sprites[sprite_counter].color_palet = 0;
-    sprites[sprite_counter].block_x_data = body_part_x_data;
-    sprites[sprite_counter].block_y_data = body_part_y_data;
-    sprites[sprite_counter].block_color_data = head_color_data;
-    sprites[sprite_counter].block_color_data_2 = head_color_data;
-    sprites[sprite_counter].blockout_color_data = trailing_part_color_data;
-    //update sprite_counter
-    sprite_counter++;
-}
-void initialize_body_part(int x, int y)
-{
-    //set coordinates, colors, number of blocks, other palletes, visibility
-    sprites[sprite_counter].x = x;
-    sprites[sprite_counter].y = y;
-    sprites[sprite_counter].visible = 0;
-    sprites[sprite_counter].to_clear = 0;
-    sprites[sprite_counter].width = 1;
-    sprites[sprite_counter].height = 1;
-    sprites[sprite_counter].number_of_blocks = 1;
-    sprites[sprite_counter].color_palet = 0;
-    sprites[sprite_counter].block_x_data = body_part_x_data;
-    sprites[sprite_counter].block_y_data = body_part_y_data;
-    sprites[sprite_counter].block_color_data = body_part_color_data;
-    sprites[sprite_counter].block_color_data_2 = body_part_color_data;
-    sprites[sprite_counter].blockout_color_data = trailing_part_color_data;
-    //update sprite_counter
-    sprite_counter++;
-}
-void initialize_trail(int x, int y)
-{
-    //set coordinates, colors, number of blocks, other palletes, visibility
-    sprites[sprite_counter].x = x;
-    sprites[sprite_counter].y = y;
-    sprites[sprite_counter].visible = 0;
-    sprites[sprite_counter].to_clear = 0;
-    sprites[sprite_counter].width = 1;
-    sprites[sprite_counter].height = 1;
-    sprites[sprite_counter].number_of_blocks = 1;
-    sprites[sprite_counter].color_palet = 0;
-    sprites[sprite_counter].block_x_data = body_part_x_data;
-    sprites[sprite_counter].block_y_data = body_part_y_data;
-    sprites[sprite_counter].block_color_data = trailing_part_color_data;
-    sprites[sprite_counter].block_color_data_2 = trailing_part_color_data;
-    sprites[sprite_counter].blockout_color_data = trailing_part_color_data;
-    //update sprite_counter
-    sprite_counter++;
-}
-void initialize_mouse(int x, int y)
-{
-    //set coordinates, colors, number of blocks, other palletes, visibility
-    sprites[sprite_counter].x = x;
-    sprites[sprite_counter].y = y;
-    sprites[sprite_counter].visible = 0;
-    sprites[sprite_counter].to_clear = 0;
-    sprites[sprite_counter].width = 1;
-    sprites[sprite_counter].height = 1;
-    sprites[sprite_counter].number_of_blocks = 1;
-    sprites[sprite_counter].color_palet = 0;
-    sprites[sprite_counter].block_x_data = body_part_x_data;
-    sprites[sprite_counter].block_y_data = body_part_y_data;
-    sprites[sprite_counter].block_color_data = mouse_color_data;
-    sprites[sprite_counter].block_color_data_2 = mouse_color_data;
-    sprites[sprite_counter].blockout_color_data = trailing_part_color_data;
+    sprites[sprite_counter].block_x_data = asteroid_x_data;
+    sprites[sprite_counter].block_y_data = asteroid_y_data;
+    sprites[sprite_counter].block_color_data = asteroid_color_data;
+    sprites[sprite_counter].block_color_data_2 = asteroid_color_data;
+    sprites[sprite_counter].blockout_color_data = asteroid_clear_data;
     //update sprite_counter
     sprite_counter++;
 }
