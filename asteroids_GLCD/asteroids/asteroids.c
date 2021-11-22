@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "GLCD.h"
 #include "renderer.h"
 #include "asteroids.h"
 
@@ -11,7 +12,7 @@ void init_asteroids(struct asteroid asteroids[], int size) {
 	
 	int i = 0;
 	int j = 0;
-	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+	struct vector2d translation = {MAX_X / 2, MAX_Y / 2};
 	
 	for (i = 0; i < size; i++) {
 		
@@ -19,8 +20,8 @@ void init_asteroids(struct asteroid asteroids[], int size) {
 		int sign_y = rand() % 100;
 		
 		//start asteroid in random location
-		int lx = rand() % SCREEN_WIDTH / 2;
-		int ly = rand() % SCREEN_HEIGHT / 2;
+		int lx = rand() % MAX_X / 2;
+		int ly = rand() % MAX_Y / 2;
 	
 		//give asteroid random velocity
 		float vx = (float) (rand() % 500) / 1000;
@@ -95,7 +96,7 @@ void update_asteroids(struct asteroid asteroids[], int size) {
 
 	int i = 0; 
 	int j = 0; 
-	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+	struct vector2d translation = {MAX_X / 2, MAX_Y / 2};
 	
 	for (i = 0; i < size; i++) {
 		
@@ -113,7 +114,7 @@ void update_asteroids(struct asteroid asteroids[], int size) {
 	}
 }
 
-void draw_asteroids(uint32_t* pixel_buffer, struct asteroid asteroids[], int size) {
+void draw_asteroids(uint16_t* pixel_buffer, struct asteroid asteroids[], int size) {
 
 	int i = 0;
 
@@ -121,22 +122,52 @@ void draw_asteroids(uint32_t* pixel_buffer, struct asteroid asteroids[], int siz
 	
 		if (asteroids[i].alive) {
 			
-			draw_line(pixel_buffer, asteroids[i].world_vert[0].x, asteroids[i].world_vert[0].y, asteroids[i].world_vert[1].x, asteroids[i].world_vert[1].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[1].x, asteroids[i].world_vert[1].y, asteroids[i].world_vert[2].x, asteroids[i].world_vert[2].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[2].x, asteroids[i].world_vert[2].y, asteroids[i].world_vert[3].x, asteroids[i].world_vert[3].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[3].x, asteroids[i].world_vert[3].y, asteroids[i].world_vert[4].x, asteroids[i].world_vert[4].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[4].x, asteroids[i].world_vert[4].y, asteroids[i].world_vert[5].x, asteroids[i].world_vert[5].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[5].x, asteroids[i].world_vert[5].y, asteroids[i].world_vert[6].x, asteroids[i].world_vert[6].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[6].x, asteroids[i].world_vert[6].y, asteroids[i].world_vert[7].x, asteroids[i].world_vert[7].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[7].x, asteroids[i].world_vert[7].y, asteroids[i].world_vert[8].x, asteroids[i].world_vert[8].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[8].x, asteroids[i].world_vert[8].y, asteroids[i].world_vert[9].x, asteroids[i].world_vert[9].y, 0xffffffff);
-			draw_line(pixel_buffer, asteroids[i].world_vert[9].x, asteroids[i].world_vert[9].y, asteroids[i].world_vert[0].x, asteroids[i].world_vert[0].y, 0xffffffff);
+			draw_line(pixel_buffer, asteroids[i].world_vert[0].x, asteroids[i].world_vert[0].y, asteroids[i].world_vert[1].x, asteroids[i].world_vert[1].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[1].x, asteroids[i].world_vert[1].y, asteroids[i].world_vert[2].x, asteroids[i].world_vert[2].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[2].x, asteroids[i].world_vert[2].y, asteroids[i].world_vert[3].x, asteroids[i].world_vert[3].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[3].x, asteroids[i].world_vert[3].y, asteroids[i].world_vert[4].x, asteroids[i].world_vert[4].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[4].x, asteroids[i].world_vert[4].y, asteroids[i].world_vert[5].x, asteroids[i].world_vert[5].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[5].x, asteroids[i].world_vert[5].y, asteroids[i].world_vert[6].x, asteroids[i].world_vert[6].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[6].x, asteroids[i].world_vert[6].y, asteroids[i].world_vert[7].x, asteroids[i].world_vert[7].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[7].x, asteroids[i].world_vert[7].y, asteroids[i].world_vert[8].x, asteroids[i].world_vert[8].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[8].x, asteroids[i].world_vert[8].y, asteroids[i].world_vert[9].x, asteroids[i].world_vert[9].y, White);
+			draw_line(pixel_buffer, asteroids[i].world_vert[9].x, asteroids[i].world_vert[9].y, asteroids[i].world_vert[0].x, asteroids[i].world_vert[0].y, White);
 		}
 
 		/*
 		//draw vert representing ships location
 		struct vector2d cpy = {asteroids[i].location.x, asteroids[i].location.y};
-		struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+		struct vector2d translation = {MAX_X / 2, MAX_Y / 2};
+		add_vector(&cpy, &translation);
+
+		draw_pixel(pixel_buffer, cpy.x, cpy.y, 0x00ff00ff);
+		*/
+	}
+}
+void clear_asteroids(uint16_t* pixel_buffer, struct asteroid asteroids[], int size) {
+
+	int i = 0;
+
+	for (i = 0; i < size; i++) {
+	
+		if (asteroids[i].alive) {
+			
+			draw_line(pixel_buffer, asteroids[i].world_vert[0].x, asteroids[i].world_vert[0].y, asteroids[i].world_vert[1].x, asteroids[i].world_vert[1].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[1].x, asteroids[i].world_vert[1].y, asteroids[i].world_vert[2].x, asteroids[i].world_vert[2].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[2].x, asteroids[i].world_vert[2].y, asteroids[i].world_vert[3].x, asteroids[i].world_vert[3].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[3].x, asteroids[i].world_vert[3].y, asteroids[i].world_vert[4].x, asteroids[i].world_vert[4].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[4].x, asteroids[i].world_vert[4].y, asteroids[i].world_vert[5].x, asteroids[i].world_vert[5].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[5].x, asteroids[i].world_vert[5].y, asteroids[i].world_vert[6].x, asteroids[i].world_vert[6].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[6].x, asteroids[i].world_vert[6].y, asteroids[i].world_vert[7].x, asteroids[i].world_vert[7].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[7].x, asteroids[i].world_vert[7].y, asteroids[i].world_vert[8].x, asteroids[i].world_vert[8].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[8].x, asteroids[i].world_vert[8].y, asteroids[i].world_vert[9].x, asteroids[i].world_vert[9].y, Black);
+			draw_line(pixel_buffer, asteroids[i].world_vert[9].x, asteroids[i].world_vert[9].y, asteroids[i].world_vert[0].x, asteroids[i].world_vert[0].y, Black);
+		}
+
+		/*
+		//draw vert representing ships location
+		struct vector2d cpy = {asteroids[i].location.x, asteroids[i].location.y};
+		struct vector2d translation = {MAX_X / 2, MAX_Y / 2};
 		add_vector(&cpy, &translation);
 
 		draw_pixel(pixel_buffer, cpy.x, cpy.y, 0x00ff00ff);
@@ -243,24 +274,24 @@ void bounds_asteroids(struct asteroid asteroids[], int size) {
 
 	for (i = 0 ; i < size; i++) {
 		
-		if (asteroids[i].location.x < -SCREEN_WIDTH / 2) {
+		if (asteroids[i].location.x < -MAX_X / 2) {
 			
-			asteroids[i].location.x = SCREEN_WIDTH / 2;
+			asteroids[i].location.x = MAX_X / 2;
 		}
 	
-		if (asteroids[i].location.x > SCREEN_WIDTH / 2) {
+		if (asteroids[i].location.x > MAX_X / 2) {
 			
-			asteroids[i].location.x = -SCREEN_WIDTH / 2;
+			asteroids[i].location.x = -MAX_X / 2;
 		}
 		
-		if (asteroids[i].location.y < -SCREEN_HEIGHT / 2) {
+		if (asteroids[i].location.y < -MAX_Y / 2) {
 			
-			asteroids[i].location.y = SCREEN_HEIGHT / 2;
+			asteroids[i].location.y = MAX_Y / 2;
 		}
 	
-		if (asteroids[i].location.y > SCREEN_HEIGHT / 2) {
+		if (asteroids[i].location.y > MAX_Y / 2) {
 			
-			asteroids[i].location.y = -SCREEN_HEIGHT / 2;
+			asteroids[i].location.y = -MAX_Y / 2;
 		}
 	}
 }

@@ -9,6 +9,7 @@
 
 #include "./asteroid.h"
 #include "./vector.h"
+#include "GLCD.h"
 
 Asteroid new_asteroid(Vector pos, Vector verts[VERTEXN], Vector dir) {
     Asteroid a;

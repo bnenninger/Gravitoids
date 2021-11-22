@@ -1,9 +1,9 @@
 
 //renderer.c
-
+#include "GLCD.h"
 #include "renderer.h"
 
-int draw_line(uint32_t* pixel_buffer, int x1, int y1, int x2, int y2, uint32_t colour) {
+int draw_line(uint16_t* pixel_buffer, int x1, int y1, int x2, int y2, uint16_t colour) {
 
 
 	//plot the first point
@@ -146,7 +146,7 @@ int draw_line(uint32_t* pixel_buffer, int x1, int y1, int x2, int y2, uint32_t c
 	return 0;	
 }
 
-int draw_pixel(uint32_t* pixel_buffer, int x, int y, uint32_t colour) {
+int draw_pixel(uint16_t* pixel_buffer, int x, int y, uint16_t colour) {
 	
 	//dont draw any pixels that are outside of the pixel buffer
 	if (x < 0 || y < 0) {
@@ -155,21 +155,21 @@ int draw_pixel(uint32_t* pixel_buffer, int x, int y, uint32_t colour) {
 	}
 	
 	//dont draw any pixels that are outside of the pixel buffer
-	if (x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT) {
+	if (x >= MAX_X || y >= MAX_Y) {
 			
 		return 1;
 	}
 
-	uint32_t position = y * SCREEN_WIDTH + x;
+	uint32_t position = y * MAX_X + x;
 	pixel_buffer[position] = colour;
 
 	return 0;
 }
 
-void clear_pixels(uint32_t* pixel_buffer, uint32_t colour) {
+void clear_pixels(uint16_t* pixel_buffer, uint16_t colour) {
 
 	int i = 0;
-	int buffer_size = SCREEN_WIDTH * SCREEN_HEIGHT;
+	int buffer_size = MAX_X * MAX_Y;
 
 	for (i = 0; i < buffer_size; i++) {
 		

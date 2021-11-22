@@ -2,13 +2,14 @@
 //player.c
 
 #include <stdio.h>
+#include "GLCD.h"
 #include "renderer.h"
 #include "player.h"
 
 void init_player(struct player* p) {
 	
 	int i = 0;
-	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+	struct vector2d translation = {MAX_X / 2, MAX_Y / 2};
 	
 	p->hit_radius = 15;
 	p->lives = 3;
@@ -68,15 +69,15 @@ void shoot_bullet(struct player* p) {
 	}
 }
 
-void draw_player(uint32_t* pixel_buffer, struct player* p) {
+void draw_player(uint16_t* pixel_buffer, struct player* p) {
 	
 	int i = 0;
 	
 	if (p->lives > 0) {
 		
-		draw_line(pixel_buffer, p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, 0xffffffff);
-		draw_line(pixel_buffer, p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, 0xffffffff);
-		draw_line(pixel_buffer, p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, 0xffffffff);
+		draw_line(pixel_buffer, p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, White);
+		draw_line(pixel_buffer, p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, White);
+		draw_line(pixel_buffer, p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, White);
 	}
 
 	/*
@@ -92,14 +93,14 @@ void draw_player(uint32_t* pixel_buffer, struct player* p) {
 
 		if (p->bullets[i].alive == TRUE) {
 			
-			draw_pixel(pixel_buffer, p->bullets[i].location.x, p->bullets[i].location.y, 0xffffffff);	
+			draw_pixel(pixel_buffer, p->bullets[i].location.x, p->bullets[i].location.y, White);	
 		}
 	}
 
 	/*
 	//draw vert representing ships location
 	struct vector2d cpy = {p->location.x, p->location.y};
-	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+	struct vector2d translation = {MAX_X / 2, MAX_Y / 2};
 	add_vector(&cpy, &translation);
 
 	draw_pixel(pixel_buffer, cpy.x, cpy.y, 0x00ff00ff);	
@@ -111,7 +112,7 @@ void update_player(struct player* p) {
 	limit_vector(&p->velocity, 2);
 	add_vector(&p->location, &p->velocity);
 	
-	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+	struct vector2d translation = {MAX_X / 2, MAX_Y / 2};
 
 	int i = 0; 
 
@@ -141,36 +142,36 @@ void bounds_player(struct player* p) {
 	
 	int i = 0;
 	
-	if (p->location.x < -SCREEN_WIDTH / 2) {
+	if (p->location.x < -MAX_X / 2) {
 		
-		p->location.x = SCREEN_WIDTH / 2;
+		p->location.x = MAX_X / 2;
 	}
 	
-	if (p->location.x > SCREEN_WIDTH / 2) {
+	if (p->location.x > MAX_X / 2) {
 		
-		p->location.x = -SCREEN_WIDTH / 2;
+		p->location.x = -MAX_X / 2;
 	}
 
-	if (p->location.y < -SCREEN_HEIGHT / 2) {
+	if (p->location.y < -MAX_Y / 2) {
 		
-		p->location.y = SCREEN_HEIGHT / 2;
+		p->location.y = MAX_Y / 2;
 	}
 	
-	if (p->location.y > SCREEN_HEIGHT / 2) {
+	if (p->location.y > MAX_Y / 2) {
 		
-		p->location.y = -SCREEN_HEIGHT / 2;
+		p->location.y = -MAX_Y / 2;
 	}
 
 	//bullet is out of bounds, reset bullet to be shot again
 	//bullets are in world space
 	for (i = 0; i < BULLETS; i++) {
 		
-		if (p->bullets[i].location.x < 0 || p->bullets[i].location.x >= SCREEN_WIDTH) {
+		if (p->bullets[i].location.x < 0 || p->bullets[i].location.x >= MAX_X) {
 			
 			p->bullets[i].alive = FALSE;
 		}
 		
-		if (p->bullets[i].location.y < 0 || p->bullets[i].location.y >= SCREEN_HEIGHT) {
+		if (p->bullets[i].location.y < 0 || p->bullets[i].location.y >= MAX_Y) {
 			
 			p->bullets[i].alive = FALSE;
 		}
