@@ -4,7 +4,7 @@
 // which I think had some errors: when programmed to measure a second, the example
 // was running a bit faster; I think, here with the changes, it does measure just
 // 1 second  now;
-#define MS_PER_FRAME 20
+#define TICKS_PER_FRAME 2
 #include "lpc17xx.h"
 #include "timer.h"
 
@@ -104,7 +104,7 @@ void TIMER0_IRQHandler(void)
 	{
 		half_seconds_counter++; //increment half-seconds
 	}
-	if (ticks % MS_PER_FRAME == 0)
+	if (ticks % TICKS_PER_FRAME == 0)
 	{
 		frame_counter++;
 	}

@@ -14,3 +14,5 @@
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\main.o: ..\source_code\timer.h
 .\objects\main.o: ..\source_code\director.h
+.\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\main.o: ..\source_code\vector.h

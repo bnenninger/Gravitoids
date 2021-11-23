@@ -38,21 +38,14 @@ int main(void)
   //initialize timer to trigger every 10 ms
   init_timer0(10);
   //initialize sound engine
-  DACInit();
+  //DACInit();
   //initialize LCD, print "waiting for start message"
   // Initialize graphical LCD
   LCD_Initialization(); 
   // Clear graphical LCD display
   LCD_Clear(Black);
-  LCD_PutText(72, 112, "Waiting for input", White, Black);
   //enables the timer0 interrupts
   enable_timer0();
-  while (SER_getChar_nb(0) != 's')
-  {
-    //wait until start signal sent
-    sprintf(lcd_text, "Seed: %d", timer0_counter);
-    LCD_PutText(8, 8, lcd_text, Yellow, Black);
-  }
   //seed the randomizer
   srand(timer0_counter);
   //start the game, director handles this, initializes the display engine, game-related variables, and sprites
@@ -60,32 +53,12 @@ int main(void)
 
   while (1)
   {
-    //poll the controls
-		//keyboard_input = SER_getChar(0);
-    keyboard_input = SER_getChar_nb(0);
-    if (keyboard_input != 0)
-    {
-      //note: use python application to translate arrow keys to wasd
-      switch (keyboard_input)
-      {
-      case 'a':
-        direction = LEFT;
-        break;
-      case 's':
-        direction = DOWN;
-        break;
-      case 'd':
-        direction = RIGHT;
-        break;
-      case 'w':
-        direction = UP;
-      }
-    }
     //use timer frame_counter variable to see if you should draw new frame
     if (frame_counter > 0)
     {
       //reset counter to 0
       frame_counter = 0;
+			half_seconds_counter = 0;
       //display new frame
       update_place_space();
     }
