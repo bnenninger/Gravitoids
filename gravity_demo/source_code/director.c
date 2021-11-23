@@ -223,7 +223,7 @@ void start_game(void)
 	update_sprite_visibility(0, 1);
 	update_sprite_visibility(1, 1);
 	update_sprite_visibility(2, 1);
-	//initialize two asteroid objects
+	//initialize three asteroid objects
 	
 	//initialize them using the initialization function
 	initialize_object(0, &displacement_0, &velocity_0, &acceleration_0, mass_0, movable_0);
