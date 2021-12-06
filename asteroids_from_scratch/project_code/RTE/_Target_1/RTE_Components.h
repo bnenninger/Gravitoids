@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'hw3' 
+ * Project: 'asteroids' 
  * Target:  'Target 1' 
  */
 
