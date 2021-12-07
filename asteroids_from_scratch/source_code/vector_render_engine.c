@@ -82,6 +82,9 @@ void draw_entity_to_buffer(uint32_t sprite_index, struct vector2d displacement, 
     // iterate through the lines and add them to the frame buffer
     for (int i = 0; i < numEndpoints; i += 2)
     {
-        buffer_line((int)(x_data[i] + displacement.x), (int)(y_data[i] + displacement.y), (int)(x_data[i + 1] + displacement.x), (int)(y_data[i + 1] + displacement.y));
+        buffer_line((int)(x_data[i] + displacement.x) + MAX_X_COORD / 2,
+                    (int)(y_data[i] + displacement.y) + MAX_Y_COORD / 2,
+                    (int)(x_data[i + 1] + displacement.x) + MAX_X_COORD / 2,
+                    (int)(y_data[i + 1] + displacement.y) + MAX_Y_COORD / 2);
     }
 }

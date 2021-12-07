@@ -4,7 +4,7 @@ F (..\source_code\AsciiLib.c)(0x619AE6B5)(--c99 -c --cpu Cortex-M3 -g -W -O0 --a
 I (..\source_code\AsciiLib.h)(0x619AE6B5)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5F644C6A)
 F (..\source_code\AsciiLib.h)(0x619AE6B5)()
-F (..\source_code\director.c)(0x61ADBF1B)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\director.o --omf_browse .\objects\director.crf --depend .\objects\director.d)
+F (..\source_code\director.c)(0x61AEAA70)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\director.o --omf_browse .\objects\director.crf --depend .\objects\director.d)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.h)(0x5E1E1914)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D49FB2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5F644C5C)
@@ -17,7 +17,7 @@ I (..\source_code\GLCD.h)(0x619AE6B6)
 I (..\source_code\director.h)(0x61AD8313)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x5F644C5C)
 I (..\source_code\vector.h)(0x619C4394)
-I (..\source_code\vector_render_engine.h)(0x61AD848F)
+I (..\source_code\vector_render_engine.h)(0x61AEA711)
 I (..\source_code\framebuffer.h)(0x619C24C6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5F644C5C)
 I (C:\Keil_v5\ARM\ARMCC\include\time.h)(0x5F644C6A)
@@ -77,7 +77,7 @@ I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h)(0x584993F2)
 I (..\source_code\joystick.h)(0x619AE6B6)
 F (..\source_code\joystick.h)(0x619AE6B6)()
-F (..\source_code\main.c)(0x61ADBF8C)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (..\source_code\main.c)(0x61AEA7BC)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5F644C5C)
 I (..\source_code\GLCD.h)(0x619AE6B6)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.h)(0x5E1E1914)
@@ -96,7 +96,7 @@ I (..\source_code\framebuffer.h)(0x619C24C6)
 I (..\source_code\director.h)(0x61AD8313)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x5F644C5C)
 I (..\source_code\vector.h)(0x619C4394)
-I (..\source_code\vector_render_engine.h)(0x61AD848F)
+I (..\source_code\vector_render_engine.h)(0x61AEA711)
 I (..\source_code\nunchuck.h)(0x61AD9C91)
 I (..\source_code\i2c.h)(0x5F641E16)
 F (..\source_code\nunchuck.c)(0x61ADA5A5)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\nunchuck.o --omf_browse .\objects\nunchuck.crf --depend .\objects\nunchuck.d)
@@ -155,8 +155,8 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5F644C5C)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x5F644C5C)
 I (..\source_code\vector.h)(0x619C4394)
 F (..\source_code\vector.h)(0x619C4394)()
-F (..\source_code\vector_render_engine.c)(0x61AD84C0)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\vector_render_engine.o --omf_browse .\objects\vector_render_engine.crf --depend .\objects\vector_render_engine.d)
-I (..\source_code\vector_render_engine.h)(0x61AD848F)
+F (..\source_code\vector_render_engine.c)(0x61AEA743)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\vector_render_engine.o --omf_browse .\objects\vector_render_engine.crf --depend .\objects\vector_render_engine.d)
+I (..\source_code\vector_render_engine.h)(0x61AEA711)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.h)(0x5E1E1914)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D49FB2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5F644C5C)
@@ -170,7 +170,7 @@ I (..\source_code\vector.h)(0x619C4394)
 I (..\source_code\GLCD.h)(0x619AE6B6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5F644C5C)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x5F644C5C)
-F (..\source_code\vector_render_engine.h)(0x61AD848F)()
+F (..\source_code\vector_render_engine.h)(0x61AEA711)()
 F (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver\GPIO_LPC17xx.c)(0x5D5C382A)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\gpio_lpc17xx.o --omf_browse .\objects\gpio_lpc17xx.crf --depend .\objects\gpio_lpc17xx.d)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver\GPIO_LPC17xx.h)(0x5D5C382A)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.h)(0x5E1E1914)

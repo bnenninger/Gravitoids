@@ -118,48 +118,29 @@ void update_objects(void)
 			update_velocity(i);
 		}
 	}
-	// loops through and adds the rocket's inverse velocity to all other objects, makes rocket appear to sit still
-	// rocket is game object index 0
-	struct vector2d inverseRocketV = game_object_array[0].velocity;
-	multiply_vector(&inverseRocketV, -1);
-	for (i = 0; i < game_object_counter; i++)
-	{
-		add_vector(&game_object_array[i].velocity, &inverseRocketV);
-	}
+
 	//update displacements and sprite positions
-	int rocketX = (int)game_object_array[0].displacement.x;
-	int rocketY = (int)game_object_array[0].displacement.y;
-	// int rocketX = MAX_X_COORD / 2;
-	// int rocketY = MAX_Y_COORD / 2;
-	// skips the rocket (object inde), and applies its reverse displacement to all other objects
 	for (i = 0; i < game_object_counter; i++)
 	{
-		if (game_object_array[i].movable)
-		{
-			//update the displacement of this object
-			update_displacement(i);
-		}
-		// update location to center the rocket
-		// places the rocket at the direct center to avoid bouncing:
-		//TODO fix this
-		// if (i == 0)
+		// if (game_object_array[i].movable)
 		// {
-		// 	game_object_array[i].displacement.x = MAX_X_COORD / 2;
-		// 	game_object_array[i].displacement.y = MAX_Y_COORD / 2;
+		//update the displacement of this object
+		update_displacement(i);
 		// }
-		// else
-		// {
-		// 	game_object_array[i].displacement.x = ((int)game_object_array[i].displacement.x - rocketX + MAX_X_COORD / 2) & GAME_SPACE_MASK;
-		// 	game_object_array[i].displacement.y = ((int)game_object_array[i].displacement.y - rocketY + MAX_Y_COORD / 2) & GAME_SPACE_MASK;
-		// }
-		// game_object_array[i].displacement.x = ((int)game_object_array[i].displacement.x) & GAME_SPACE_MASK;
-		// game_object_array[i].displacement.y = ((int)game_object_array[i].displacement.y) & GAME_SPACE_MASK;
 		update_sprite(i);
 	}
-
-	// game_object_array[0].displacement.x = MAX_X_COORD / 2;
-	// game_object_array[0].displacement.y = MAX_Y_COORD / 2;
+	// subtract out the rocket displacement, keeping the rocket at the center
+	struct vector2d inverseRocketDisplacement = game_object_array[0].displacement;
+	multiply_vector(&inverseRocketDisplacement, -1);
+	for (i = 1; i < game_object_counter; i++)
+	{
+		add_vector(&game_object_array[i].displacement, &inverseRocketDisplacement);
+	}
+	//zero out the rocket position
+	game_object_array[0].displacement.x = 0;
+	game_object_array[0].displacement.y = 0;
 }
+
 void initialize_object(uint32_t sprite_index, float scale, float orientation, struct vector2d *displacement, struct vector2d *velocity, struct vector2d *acceleration, float mass, uint8_t movable)
 {
 	//assign to sprite

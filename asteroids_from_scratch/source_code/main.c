@@ -64,13 +64,13 @@ int main(void)
     //start_game();
 
     struct vector2d dship;
-    dship.x = 160;
-    dship.y = 120;
+    dship.x = 0;
+    dship.y = 0;
     struct vector2d vship;
     vship.x = 0;
     vship.y = 1;
     struct vector2d dasteroid;
-    dasteroid.x = 200;
+    dasteroid.x = 100;
     dasteroid.y = 100;
     struct vector2d vasteroid;
     vasteroid.x = 0;
@@ -80,7 +80,7 @@ int main(void)
     zeroVector.y = 0;
 
     initialize_object(ROCKET_INDEX, 1, 0.0, &dship, &vship, &zeroVector, 0, 1);
-    initialize_object(ASTEROID_INDEX, 6, 0.0, &dasteroid, &vasteroid, &zeroVector, 10, 1);
+    initialize_object(ASTEROID_INDEX, 6, 0.0, &dasteroid, &vasteroid, &zeroVector, 10, 0);
 
     update_place_space();
     int prev10msCount = timer0_counter;
