@@ -1,4 +1,5 @@
 #include "LPC17xx.h"
+#include <stdio.h>
 #include "GLCD.h"
 #include "director.h"
 //#include "display_engine.h"
@@ -7,23 +8,76 @@
 #include <math.h>
 #include "sound.h"
 #include "vector.h"
-#include <stdio.h>
 #include "string.h"
 #include "framebuffer.h"
 
+#define PI 3.14159265358979323846264
+
 #define ROCKET_THRUST 0.25
 #define ROCKET_ROTATION_RATE 0.002
-// mask for the game space, relies on overflows for wraparound
-//bitshift of 10 or 11 ideal
-#define GAME_SPACE_MASK (((1 << 8) - 1) | 1 << 15)
+#define ROCKET_VELOCITY_DAMPING_FACTOR 0.99
+#define BULLET_VELOCITY 5.0
+#define BULLET_ROTATION_RATE 0.1
+#define BULLET_LIFESPAN 175
+#define GAME_SPACE_MAX_X 100.0
+#define GAME_SPACE_MAX_Y 100.0
 
 //game variables
+uint32_t score = 0;
 //game object array
 struct GAME_OBJECT game_object_array[GAME_OBJECT_NUM];
 uint32_t game_object_counter;
+struct GAME_OBJECT bullet_array[BULLET_NUM];
+uint32_t bullet_counter;
 char debug_text[64]; //used for debugging
 uint8_t debug = 0;
-//vector used for summing
+uint8_t fire_button_released = 1;
+
+void kill_game_object(struct GAME_OBJECT *arr, int n, int index);
+
+// checks if the passed collision object has collided with any item within the passed array of game objects
+// checks based on radius alone
+int check_collisions(struct GAME_OBJECT *collisionObject, struct GAME_OBJECT *arr, int n)
+{
+	float collisionRadius = get_sprite_radius(collisionObject->sprite_index) * collisionObject->size;
+	struct vector2d collisionDisplacement = collisionObject->displacement;
+	for (int i = 0; i < n; i++)
+	{
+		float otherRadius = get_sprite_radius(arr[i].sprite_index) * arr[i].size;
+		struct vector2d otherDisplacement = arr[i].displacement;
+		multiply_vector(&otherDisplacement, -1.0);
+		add_vector(&otherDisplacement, &collisionDisplacement);
+		float distance = magnitude_vector(&otherDisplacement);
+		// return current index if collision, continue otherwise
+		if (distance < collisionRadius + otherRadius)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+int check_bullet_asteroid_collisions()
+{
+	int asteroidIndex = -1;
+	for (int i = 1; i < game_object_counter; i++)
+	{
+		int bulletCollisionIndex = check_collisions(&game_object_array[i], bullet_array, bullet_counter);
+		if (bulletCollisionIndex > -1)
+		{
+			//TODO increment score
+			//kill the bullet
+			kill_game_object(bullet_array, bullet_counter, bulletCollisionIndex);
+			bullet_counter--;
+			//kill the asteroid
+			// TODO spawn more if not a tiny asteroid
+			kill_game_object(game_object_array, game_object_counter, i);
+			game_object_counter--;
+			// as the number of game objects has decreased, decrement i to keep the for loop valid
+			i--;
+		}
+	}
+}
 
 //functions
 //calculate acceleration due to gravity -- NOT FORCE
@@ -70,38 +124,11 @@ void update_acceleration(uint32_t object_index)
 		add_vector(&(game_object_array[object_index].acceleration), &gravity_vector);
 	}
 }
-//updates the object's velocity based on its current acceleration
-void update_velocity(uint32_t object_index)
+
+//updates the acceleration of all game objects in the game object array
+void update_all_accelerations(void)
 {
-	//add acceleration directly
-	add_vector(&(game_object_array[object_index].velocity), &(game_object_array[object_index].acceleration));
-}
-//displacement calc is broken in some way?
-void update_displacement(uint32_t object_index)
-{
-	//add velocity directly
-	add_vector(&(game_object_array[object_index].displacement), &(game_object_array[object_index].velocity));
-}
-void update_sprite(uint32_t object_index)
-{
-	//x and y positions for sprites are top, left corner, but for objects are middle
-	int x_position;
-	int y_position;
-	//x_position = (int)round(game_object_array[object_index].displacement.x - check_width(game_object_array[object_index].sprite_index) / 2.0);
-	//y_position = (int)round(game_object_array[object_index].displacement.y - check_height(game_object_array[object_index].sprite_index) / 2.0);
-	x_position = (int)(game_object_array[object_index].displacement.x + .5);
-	y_position = (int)(game_object_array[object_index].displacement.y + .5);
-	// if (x_position != check_x_pos(game_object_array[object_index].sprite_index) || y_position != check_y_pos(game_object_array[object_index].sprite_index))
-	// {
-	// 	clear_sprite(game_object_array[object_index].sprite_index);
-	// 	update_sprite_position(game_object_array[object_index].sprite_index, x_position, y_position);
-	// }
-}
-void update_objects(void)
-{
-	int i;
-	//update accelerations
-	for (i = 0; i < game_object_counter; i++)
+	for (int i = 0; i < game_object_counter; i++)
 	{
 		if (game_object_array[i].movable)
 		{
@@ -109,8 +136,20 @@ void update_objects(void)
 			update_acceleration(i);
 		}
 	}
+}
+
+//updates the object's velocity based on its current acceleration
+void update_velocity(uint32_t object_index)
+{
+	//add acceleration directly
+	add_vector(&(game_object_array[object_index].velocity), &(game_object_array[object_index].acceleration));
+}
+
+// updates the velocities of all game objects in the game object array
+void update_all_velocities(void)
+{
 	//update velocities
-	for (i = 0; i < game_object_counter; i++)
+	for (int i = 0; i < game_object_counter; i++)
 	{
 		if (game_object_array[i].movable)
 		{
@@ -118,68 +157,198 @@ void update_objects(void)
 			update_velocity(i);
 		}
 	}
-
-	//update displacements and sprite positions
-	for (i = 0; i < game_object_counter; i++)
-	{
-		// if (game_object_array[i].movable)
-		// {
-		//update the displacement of this object
-		update_displacement(i);
-		// }
-		update_sprite(i);
-	}
-	// subtract out the rocket displacement, keeping the rocket at the center
-	struct vector2d inverseRocketDisplacement = game_object_array[0].displacement;
-	multiply_vector(&inverseRocketDisplacement, -1);
-	for (i = 1; i < game_object_counter; i++)
-	{
-		add_vector(&game_object_array[i].displacement, &inverseRocketDisplacement);
-	}
-	//zero out the rocket position
-	game_object_array[0].displacement.x = 0;
-	game_object_array[0].displacement.y = 0;
 }
 
-void initialize_object(uint32_t sprite_index, float scale, float orientation, struct vector2d *displacement, struct vector2d *velocity, struct vector2d *acceleration, float mass, uint8_t movable)
+// displacement calc is broken in some way?
+// i think it's working? Was a false alarm that is wasn't. -Brendan
+// void update_displacement(uint32_t object_index)
+// {
+// 	//add velocity directly
+// 	add_vector(&(game_object_array[object_index].displacement), &(game_object_array[object_index].velocity));
+// }
+
+// updates the displacement for the passed game object
+void update_displacement(struct GAME_OBJECT *obj)
 {
-	//assign to sprite
-	game_object_array[game_object_counter].sprite_index = sprite_index;
-	//assign the scale and orientation fields
-	game_object_array[game_object_counter].size = scale;
-	game_object_array[game_object_counter].orientation = orientation;
-	//assign displacement
-	game_object_array[game_object_counter].displacement.x = displacement->x;
-	game_object_array[game_object_counter].displacement.y = displacement->y;
-	//assign velocity
-	game_object_array[game_object_counter].velocity.x = velocity->x;
-	game_object_array[game_object_counter].velocity.y = velocity->y;
-	//assign acceleration
-	game_object_array[game_object_counter].acceleration.x = acceleration->x;
-	game_object_array[game_object_counter].acceleration.y = acceleration->y;
-	//assign mass
-	game_object_array[game_object_counter].mass = mass;
-	//select if this object should move or not (should the position be updated?) 0 = don't move, 1 = do move
-	game_object_array[game_object_counter].movable = movable;
-	//increment game object counter
-	game_object_counter++;
+	//add velocity directly
+	add_vector(&(obj->displacement), &(obj->velocity));
 }
 
-void render_gamestate_to_LCD(void)
+// updates the displacements for all objects in the passed array
+void update_all_displacements(struct GAME_OBJECT *arr, int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		if (game_object_array[i].movable)
+		{
+			update_displacement(arr + i);
+		}
+	}
+}
+
+// updates the displacements for all objects such that the rocket is in the center
+void center_around_rocket(struct GAME_OBJECT *arr, int n, struct vector2d rocketDisplacement)
+{
+	// subtract out the rocket displacement, keeping the rocket at the center
+	struct vector2d inverseRocketDisplacement = rocketDisplacement;
+	multiply_vector(&inverseRocketDisplacement, -1);
+	for (int i = 0; i < n; i++)
+	{
+		add_vector(&arr[i].displacement, &inverseRocketDisplacement);
+	}
+}
+
+// wraps the game objects around the game space
+void wrap_around_gamespace()
 {
 	for (int i = 0; i < game_object_counter; i++)
 	{
-		struct GAME_OBJECT *obj = &game_object_array[i];
+		// wrap around in x dimension
+		if (game_object_array[i].displacement.x > GAME_SPACE_MAX_X)
+		{
+			game_object_array[i].displacement.x -= GAME_SPACE_MAX_X * 2;
+		}
+		else if (game_object_array[i].displacement.x < -GAME_SPACE_MAX_X)
+		{
+			game_object_array[i].displacement.x += GAME_SPACE_MAX_X * 2;
+		}
+		// wrap around in y dimension
+		if (game_object_array[i].displacement.y > GAME_SPACE_MAX_Y)
+		{
+			game_object_array[i].displacement.y -= GAME_SPACE_MAX_Y * 2;
+		}
+		else if (game_object_array[i].displacement.y < -GAME_SPACE_MAX_Y)
+		{
+			game_object_array[i].displacement.y += GAME_SPACE_MAX_Y * 2;
+		}
+	}
+}
+
+// kills the game object at the passed index in the passed array
+void kill_game_object(struct GAME_OBJECT *arr, int n, int index)
+{
+	for (int i = index + 1; i < n; i++)
+	{
+		arr[i - 1] = arr[i];
+	}
+}
+
+void kill_outside_gamespace(struct GAME_OBJECT *arr, int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		// wrap around in x dimension
+		if (arr[i].displacement.x > GAME_SPACE_MAX_X ||
+			arr[i].displacement.x < -GAME_SPACE_MAX_X ||
+			arr[i].displacement.y > GAME_SPACE_MAX_Y ||
+			arr[i].displacement.y < -GAME_SPACE_MAX_Y)
+		{
+			kill_game_object(arr, n, i);
+			bullet_counter--;
+		}
+	}
+}
+
+void fire_bullet()
+{
+	if (bullet_counter < BULLET_NUM)
+	{
+		struct vector2d velocity;
+		velocity.x = 0;
+		velocity.y = BULLET_VELOCITY;
+		rotate_vector(&velocity, game_object_array[0].orientation * 180 / PI);
+		// adds the velocity to the rocket velocity, helps make behavior more sane when firing at high velocity
+		add_vector(&velocity, &game_object_array[0].velocity);
+		bullet_array[bullet_counter]
+			.displacement = game_object_array[0].displacement;
+		bullet_array[bullet_counter].velocity = velocity;
+		bullet_array[bullet_counter].size = 1;
+		bullet_array[bullet_counter].sprite_index = BULLET_INDEX;
+		bullet_array[bullet_counter].rotation_rate = BULLET_ROTATION_RATE;
+		bullet_array[bullet_counter].movable = 1;
+		bullet_array[bullet_counter].visible = 1;
+		bullet_array[bullet_counter].lifespan = BULLET_LIFESPAN;
+		bullet_counter++;
+	}
+}
+
+void update_objects(void)
+{
+	// update the accelerations, velocities, and displacements within the game object array
+	// these are the only objects to which gravity is applied
+	update_all_accelerations();
+	update_all_velocities();
+	update_all_displacements(game_object_array, game_object_counter);
+	center_around_rocket(&game_object_array[1], game_object_counter - 1, game_object_array[0].displacement);
+	wrap_around_gamespace();
+	update_all_displacements(bullet_array, bullet_counter);
+	center_around_rocket(bullet_array, bullet_counter, game_object_array[0].displacement);
+	kill_outside_gamespace(bullet_array, bullet_counter);
+	//zero out the rocket position
+	game_object_array[0].displacement.x = 0;
+	game_object_array[0].displacement.y = 0;
+	//damp the rocket velocity
+	multiply_vector(&game_object_array[0].velocity, ROCKET_VELOCITY_DAMPING_FACTOR);
+}
+
+void initialize_object(uint32_t sprite_index, float scale, float orientation, float rotation_rate, struct vector2d *displacement, struct vector2d *velocity, struct vector2d *acceleration, float mass, uint8_t movable)
+{
+	if (game_object_counter < GAME_OBJECT_NUM)
+	{
+		//assign to sprite
+		game_object_array[game_object_counter].sprite_index = sprite_index;
+		//assign the scale and orientation fields
+		game_object_array[game_object_counter].size = scale;
+		game_object_array[game_object_counter].orientation = orientation;
+		game_object_array[game_object_counter].rotation_rate = rotation_rate;
+		//assign displacement
+		game_object_array[game_object_counter].displacement.x = displacement->x;
+		game_object_array[game_object_counter].displacement.y = displacement->y;
+		//assign velocity
+		game_object_array[game_object_counter].velocity.x = velocity->x;
+		game_object_array[game_object_counter].velocity.y = velocity->y;
+		//assign acceleration
+		game_object_array[game_object_counter].acceleration.x = acceleration->x;
+		game_object_array[game_object_counter].acceleration.y = acceleration->y;
+		//assign mass
+		game_object_array[game_object_counter].mass = mass;
+		//select if this object should move or not (should the position be updated?) 0 = don't move, 1 = do move
+		game_object_array[game_object_counter].movable = movable;
+		game_object_array[game_object_counter].lifespan = -1;
+		//increment game object counter
+		game_object_counter++;
+	}
+}
+
+void add_array_to_display_buffer(struct GAME_OBJECT *arr, int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		struct GAME_OBJECT *obj = arr + i;
 		// struct vector2d displacement = obj->displacement;
 		// displacement.x = displacement.x - game_object_array[0].displacement.x + MAX_X_COORD / 2;
 		// displacement.y = displacement.y - game_object_array[0].displacement.y + MAX_Y_COORD / 2;
 		draw_entity_to_buffer(obj->sprite_index, obj->displacement, obj->size, obj->orientation);
 	}
+}
+
+void render_gamestate_to_LCD(void)
+{
+	// for (int i = 0; i < game_object_counter; i++)
+	// {
+	// 	struct GAME_OBJECT *obj = &game_object_array[i];
+	// 	// struct vector2d displacement = obj->displacement;
+	// 	// displacement.x = displacement.x - game_object_array[0].displacement.x + MAX_X_COORD / 2;
+	// 	// displacement.y = displacement.y - game_object_array[0].displacement.y + MAX_Y_COORD / 2;
+	// 	draw_entity_to_buffer(obj->sprite_index, obj->displacement, obj->size, obj->orientation);
+	// }
+	add_array_to_display_buffer(game_object_array, game_object_counter);
+	add_array_to_display_buffer(bullet_array, bullet_counter);
 	buffer_to_LCD();
 }
 
 //this function will be called whenever you want to draw a new frame
-void update_place_space(void)
+void update_game_space(void)
 {
 	//if debug is true, print debug info
 	if (debug)
@@ -188,6 +357,10 @@ void update_place_space(void)
 	}
 	//update the objects
 	update_objects();
+	int col = check_collisions(&game_object_array[0], &game_object_array[1], game_object_counter - 1);
+	sprintf(debug_text, "collision %d", col);
+	buffer_text(0, 0, debug_text);
+	check_bullet_asteroid_collisions();
 	//update the display
 	render_gamestate_to_LCD();
 }
@@ -264,6 +437,18 @@ void control_input(int x, int y, uint8_t thrust, uint8_t fire)
 	else
 	{
 		game_object_array[0].sprite_index = ROCKET_INDEX;
+	}
+	// fire bullet if the "fire" button is pressed
+	if (fire && fire_button_released)
+	{
+		fire_bullet();
+		// sprintf(debug_text, "FIRE!", x, y);
+		// buffer_text(0, 0, debug_text);
+		fire_button_released = 0;
+	}
+	else if (!fire)
+	{
+		fire_button_released = 1;
 	}
 }
 

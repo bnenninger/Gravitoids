@@ -1,5 +1,7 @@
 {
 	"files.associations": {
-		"lpc17xx.h": "c"
+		"lpc17xx.h": "c",
+		"director.h": "c",
+		"math.h": "c"
 	},
 }

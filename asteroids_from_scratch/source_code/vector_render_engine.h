@@ -5,13 +5,14 @@
 #ifndef __VECTOR_ENGINE_H__
 #define __VECTOR_ENGINE_H__
 
-#define NUM_SPRITES 4
+#define NUM_SPRITES 7
 
 // don't change this to index from zero
 // it doesn't work, no idea why
 #define ROCKET_INDEX 1
 #define ASTEROID_INDEX 2
 #define ROCKET_FIRE_INDEX 3
+#define BULLET_INDEX 4
 
 // struct for storing entity info
 // each object rendered in the game will be an entity
@@ -30,5 +31,6 @@
 
 void init_vector_render_engine();
 void draw_entity_to_buffer(uint32_t sprite_index, struct vector2d displacement, float scale, float orientation);
+float get_sprite_radius(int sprite_index);
 
 #endif

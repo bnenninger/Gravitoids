@@ -68,10 +68,13 @@ int main(void)
     dship.y = 0;
     struct vector2d vship;
     vship.x = 0;
-    vship.y = 1;
+    vship.y = 0;
     struct vector2d dasteroid;
-    dasteroid.x = 100;
-    dasteroid.y = 100;
+    dasteroid.x = 90;
+    dasteroid.y = 90;
+    struct vector2d dasteroid2;
+    dasteroid2.x = -90;
+    dasteroid2.y = -90;
     struct vector2d vasteroid;
     vasteroid.x = 0;
     vasteroid.y = 0;
@@ -79,24 +82,26 @@ int main(void)
     zeroVector.x = 0;
     zeroVector.y = 0;
 
-    initialize_object(ROCKET_INDEX, 1, 0.0, &dship, &vship, &zeroVector, 0, 1);
-    initialize_object(ASTEROID_INDEX, 6, 0.0, &dasteroid, &vasteroid, &zeroVector, 10, 0);
+    initialize_object(ROCKET_INDEX, 1, 0.0, 0.0, &dship, &vship, &zeroVector, 0, 1);
+    initialize_object(BULLET_INDEX, 6, 0.0, 5.0, &dasteroid, &vasteroid, &zeroVector, 0, 0);
+    initialize_object(ASTEROID_INDEX, 10, 0.0, 5.0, &dasteroid2, &vasteroid, &zeroVector, 0, 0);
 
-    update_place_space();
+    // render_gamestate_to_LCD();
+    update_game_space();
     int prev10msCount = timer0_counter;
     while (1)
     {
         if (timer0_counter >= prev10msCount + 5)
         {
             NunchuckData ctrlInput = NunChuck_read();
-            control_input(ctrlInput.joy_x_axis, ctrlInput.joy_y_axis, !ctrlInput.z_button, ctrlInput.c_button);
+            control_input(ctrlInput.joy_x_axis, ctrlInput.joy_y_axis, !ctrlInput.z_button, !ctrlInput.c_button);
 
-            update_place_space();
+            update_game_space();
             // int start = timer0_counter;
             // buffer_to_LCD();
             // int end = timer0_counter;
-            // sprintf(lcd_text, "%d", end - start);
-            // LCD_PutText(100, 0, lcd_text, White, Black);
+            // sprintf(lcd_text, "%d", 123456);
+            // LCD_PutText(0, 0, lcd_text, White, Black);
             // prev_half_second = half_seconds_counter;
             // prev10msCount = timer0_counter;
             // frame_counter = 0;
