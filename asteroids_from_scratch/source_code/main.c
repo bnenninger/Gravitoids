@@ -21,6 +21,7 @@ uint32_t prev_half_second = 0;
 volatile uint32_t frame_counter = 0;
 //to display to LCD
 char lcd_text[50];
+char BT_text[32];
 //control-related variables
 uint8_t direction;
 char keyboard_input;
@@ -34,9 +35,15 @@ int main(void)
 {
     int i;
     // (1) initializations;
-    //SystemInit();
+    SystemInit();
     //initialize serial for inputs from computer keyboard
     SER_init(0, 9600);
+	
+		//BT RX -> P4.28
+		//BT TX -> P4.29
+		//BT GND -> gnd
+		//BT VCC -> 3.3V
+		SER_init(3, 9600);
     //initialize timer to trigger every 10 ms
     init_timer0(10);
     //initialize sound engine
@@ -63,13 +70,14 @@ int main(void)
     //start the game, director handles this, initializes the display engine, game-related variables, and sprites
     //start_game();
 
-    // render_gamestate_to_LCD();
+    //render_gamestate_to_LCD();
     update_game_space();
     start_game();
     int prev10msCount = timer0_counter;
     while (1)
     {
-        if (timer0_counter >= prev10msCount + 5)
+      
+			if (timer0_counter >= prev10msCount + 5)
         {
 
             NunchuckData ctrlInput = NunChuck_read();
@@ -78,8 +86,9 @@ int main(void)
             update_game_space();
 
             long end = timer0_counter;
-            // sprintf(lcd_text, "time: %d", end - start);
-            // buffer_text(100, 16, lcd_text);
+						
+             //sprintf(lcd_text, "time: %d", end - start);
+             //buffer_text(100, 16, lcd_text);
         }
     }
 }

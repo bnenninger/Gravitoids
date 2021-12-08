@@ -10,10 +10,12 @@
 #include "vector.h"
 #include "string.h"
 #include "framebuffer.h"
+#include "Serial.h"
 
 #define PI 3.14159265358979323846264
 
 //rocket parameters
+
 #define ROCKET_SCALE 1.0
 #define ROCKET_MASS 1.0
 #define ROCKET_THRUST 0.25
@@ -796,7 +798,7 @@ void start_game(void)
 	gravity_object_counter = 0;
 	bullet_counter = 0;
 	particle_counter = 0;
-
+	
 	//TODO initialize starfield
 
 	struct vector2d dship;

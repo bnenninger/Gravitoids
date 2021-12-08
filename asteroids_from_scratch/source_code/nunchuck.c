@@ -45,8 +45,11 @@ void NunChuck_init(void)
 	//}
 	//else if (PORT_USED == 2)
 	//{
-		I2C2Init();
+	//	I2C2Init();
 	//}
+	
+	I2C2Init(); 
+	//I2C1Init();
 
 	NunChuck_phase1_init();
 }

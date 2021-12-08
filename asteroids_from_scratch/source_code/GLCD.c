@@ -254,6 +254,7 @@ void LCD_Initialization(void)
 
   // Cris: this one is the "if" that works for LCD displays of the NEW LandTiger boards (2015-2019)!
   ///*---
+	/*
   if (DeviceCode == 0x9325 || DeviceCode == 0x9328)
   {
     LCD_Code = ILI9325;
@@ -322,9 +323,10 @@ void LCD_Initialization(void)
     LCD_WriteReg(0x0020, 0x0000);
     LCD_WriteReg(0x0021, 0x0000);
   }
+	*/
   //---*/
   // Cris: this one is the "if" that works for LCD displays of the OLD LandTiger boards (2013-2015)!
-  /*
+  
   if( DeviceCode == 0x8989 )
   {
       LCD_Code = SSD1289;
@@ -370,7 +372,7 @@ void LCD_Initialization(void)
       LCD_WriteReg(0x004f,0);     
       LCD_WriteReg(0x004e,0);      
   }	
-	*/
+	
   /*---
   if( DeviceCode == 0x9320 || DeviceCode == 0x9300 )
   {

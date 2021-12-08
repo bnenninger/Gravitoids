@@ -31,7 +31,7 @@ void SER_init (int uart_port, int baudrate)
     LPC_PINCON->PINSEL0 |= (1 << 6);             // Pin P0.3 used as RXD0 (Com0) 
     pclkdiv = (LPC_SC->PCLKSEL0 >> 6) & 0x03;    // Bits 7:6 are for UART0; see page 57 of the user manual!   
     pUart = (LPC_UART_TypeDef *)LPC_UART0;
-  } else {                                       // UART2 
+  } else if (uart_port == 2) {                                       // UART2 
     // power up the UART2 peripheral;
     // Note: this is the only difference compared to the other branch of
     // this if, i.e., the case of UART0; here we need to power-up the UART2
@@ -44,7 +44,22 @@ void SER_init (int uart_port, int baudrate)
     LPC_PINCON->PINSEL0 |= (1 << 22);            // Pin P0.11 used as RXD1 (Com2) 
     pclkdiv = (LPC_SC->PCLKSEL1 >> 16) & 0x03;   // Bits 17:16 of PCLKSEL1 are for UART2; see page 58 of the user manual!
     pUart = (LPC_UART_TypeDef *)LPC_UART2;
-  }
+  } else {                                       // UART3
+    // power up the UART3 peripheral;
+		// Note: looking at the schematic diagram of the LandTiger board we see that
+		// UART3 RX and TX are available as pin functions at the pins P0.0, P0.1
+		// and pins P4.29, P4.28; also note that P0.0, P0.1 are wired on the board's
+		// PCB to the pins CAN1_RX, CAN1_TX that go thru a small IC to the output connector
+		// CAN 1; on the other hand, P4.29, P4.28 are wired on the board's PCB to the pins 
+		// 485_RX, 485_TX that go thru a small IC to the output connector RS485;
+		// I guess, we could  use any of these two sets of pins to make direct connections 
+		// to UART3; let's use P4.29, P4.28;
+    LPC_SC->PCONP |= (1 << 25);
+		LPC_PINCON->PINSEL9 |= (3 << 24);             // Pin P4.28 used as TXD3 (Com3); see page 120 of the user manual!
+    LPC_PINCON->PINSEL9 |= (3 << 26);             // Pin P4.29 used as RXD3 (Com3) 
+    pclkdiv = (LPC_SC->PCLKSEL1 >> 18) & 0x03;    // Bits 19:18 of PCLKSEL1 are for UART3; see page 58 of the user manual!
+    pUart = (LPC_UART_TypeDef *)LPC_UART3;
+	}
 
   // (2)
   switch ( pclkdiv )
