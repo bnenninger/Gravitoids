@@ -13,6 +13,9 @@
 
 #define PI 3.14159265358979323846264
 
+//rocket parameters
+#define ROCKET_SCALE 1.0
+#define ROCKET_MASS 1.0
 #define ROCKET_THRUST 0.25
 #define ROCKET_ROTATION_RATE 0.002
 #define ROCKET_VELOCITY_DAMPING_FACTOR 0.99
@@ -20,32 +23,57 @@
 #define ROCKET_DEBRIS_LIFESPAN_MIN 15
 #define ROCKET_DEBRIS_LIFESPAN_MAX 45
 #define ROCKET_DEBRIS_MAX_ROTATION_RATE 0.1
-#define BULLET_VELOCITY 5
+// bullet parameters
+#define BULLET_VELOCITY 10
 #define BULLET_ROTATION_RATE 0.5
-// #define BULLET_LIFESPAN 8
 #define BULLET_LIFESPAN (180 / (int)BULLET_VELOCITY)
-#define GAME_SPACE_MAX_X 100.0
-#define GAME_SPACE_MAX_Y 100.0
+// asteroid parameters
+#define ASTEROID_MAX_INIT_VELOCITY 4.0
+#define ASTEROID_LARGE_MAX_ROTATION_RATE 0.2
+#define ASTEROID_SPAWN_COUNTER_MAX 90 // delay of 4.5 seconds
+#define ASTEROID_SPAWN_COUNTER_MIN 30 // delay of 1.5 seconds
+
+// game parameters
+#define GAME_SPACE_MAX_X 500
+#define GAME_SPACE_MAX_Y 500
+#define EXPLODING_GAME_CYCLES 40
+#define RESPAWNING_GAME_CYCLES 60
 
 int asteroid_kill_score[] = {30, 100, 100};
+int asteroid_masses[] = {7.0, 4.0, 1.0};
 float asteroid_sizes[] = {8.0, 6.0, 3.0};
 
 //game variables
 uint32_t score = 0;
 uint8_t lives = 3;
 game_state state = ALIVE;
-//game object array
+uint32_t asteroid_spawn_counter;
+// tracks the number of game cycles left in a specific mode
+uint16_t mode_countdown = RESPAWNING_GAME_CYCLES;
+
+// game object tracking
+// game object array
 struct GAME_OBJECT gravity_object_array[GAME_OBJECT_NUM];
 uint32_t gravity_object_counter = 0;
 struct GAME_OBJECT bullet_array[BULLET_NUM];
 uint32_t bullet_counter = 0;
 struct GAME_OBJECT particle_array[PARTICLE_NUM];
 uint32_t particle_counter = 0;
+struct GAME_OBJECT star_array[STAR_NUM];
+uint32_t star_counter = 0;
 char debug_text[64]; //used for debugging
 uint8_t debug = 0;
 uint8_t fire_button_released = 1;
 
 void kill_game_object(struct GAME_OBJECT *arr, int n, int index);
+void spawn_asteroid(object_type asteroid_type, struct vector2d displacement, struct vector2d velocity);
+struct vector2d random_vector(float magnitude);
+
+void set_state_exploding()
+{
+	state = EXPLODING;
+	mode_countdown = EXPLODING_GAME_CYCLES;
+}
 
 // checks if the passed collision object has collided with any item within the passed array of game objects
 // checks based on radius alone
@@ -69,24 +97,56 @@ int check_collisions(struct GAME_OBJECT *collisionObject, struct GAME_OBJECT *ar
 	return -1;
 }
 
+// kills an asteroid, increments the score appropriately, and spawns smaller asteroids if needed
+void kill_asteroid(int index)
+{
+	// store needed data from the asteroid before killing
+	object_type type = gravity_object_array[index].type;
+	struct vector2d displacement = gravity_object_array[index].displacement;
+	struct vector2d velocity = gravity_object_array[index].velocity;
+	// kill the old asteroid
+	kill_game_object(gravity_object_array, gravity_object_counter, index);
+	gravity_object_counter--;
+	// increment the score based on the type of asteroid killed
+	score += asteroid_kill_score[type];
+	// spawn new asteroids of one size smaller
+	if (type != SMALL_ASTEROID)
+	{
+		// spawn two child asteroids for each parent
+		for (int i = 0; i < 2; i++)
+		{
+			// adds a random displacement offset to prevent gravity problems
+			struct vector2d offset = random_vector(15);
+			add_vector(&offset, &displacement);
+			// adds a random bit of velocity to push the child asteroids around
+			struct vector2d additional_velocity = random_vector(ASTEROID_MAX_INIT_VELOCITY / 2);
+			add_vector(&additional_velocity, &velocity);
+			// spawns the asteroid
+			spawn_asteroid(type + 1, offset, additional_velocity);
+		}
+	}
+}
+
 int check_bullet_asteroid_collisions()
 {
 	int asteroidIndex = -1;
-	for (int i = 1; i < gravity_object_counter; i++)
+	// stores the current number of gravity objects, as it could change but we don't care about new objects
+	int n = gravity_object_counter;
+	for (int i = 1; i < n; i++)
 	{
 		int bulletCollisionIndex = check_collisions(&gravity_object_array[i], bullet_array, bullet_counter);
 		if (bulletCollisionIndex > -1)
 		{
 			//TODO increment score
-			score += asteroid_kill_score[gravity_object_array[i].type];
+			// score += asteroid_kill_score[gravity_object_array[i].type];
 			//kill the bullet
 			kill_game_object(bullet_array, bullet_counter, bulletCollisionIndex);
 			bullet_counter--;
-			//kill the asteroid
-			// TODO spawn more if not a tiny asteroid
-			kill_game_object(gravity_object_array, gravity_object_counter, i);
-			gravity_object_counter--;
+			//kill the asteroid and spawn more if needed
+			kill_asteroid(i);
+			n--;
 			// as the number of game objects has decreased, decrement i to keep the for loop valid
+			// don't need to worry about any possible new asteroids, they are at the end of the array
 			i--;
 		}
 	}
@@ -225,27 +285,27 @@ void rotate_objects(struct GAME_OBJECT *arr, int n)
 }
 
 // wraps the game objects around the game space
-void wrap_around_gamespace()
+void wrap_around_gamespace(struct GAME_OBJECT *arr, int n)
 {
-	for (int i = 0; i < gravity_object_counter; i++)
+	for (int i = 0; i < n; i++)
 	{
 		// wrap around in x dimension
-		if (gravity_object_array[i].displacement.x > GAME_SPACE_MAX_X)
+		if (arr[i].displacement.x > GAME_SPACE_MAX_X)
 		{
-			gravity_object_array[i].displacement.x -= GAME_SPACE_MAX_X * 2;
+			arr[i].displacement.x -= GAME_SPACE_MAX_X * 2;
 		}
-		else if (gravity_object_array[i].displacement.x < -GAME_SPACE_MAX_X)
+		else if (arr[i].displacement.x < -GAME_SPACE_MAX_X)
 		{
-			gravity_object_array[i].displacement.x += GAME_SPACE_MAX_X * 2;
+			arr[i].displacement.x += GAME_SPACE_MAX_X * 2;
 		}
 		// wrap around in y dimension
-		if (gravity_object_array[i].displacement.y > GAME_SPACE_MAX_Y)
+		if (arr[i].displacement.y > GAME_SPACE_MAX_Y)
 		{
-			gravity_object_array[i].displacement.y -= GAME_SPACE_MAX_Y * 2;
+			arr[i].displacement.y -= GAME_SPACE_MAX_Y * 2;
 		}
-		else if (gravity_object_array[i].displacement.y < -GAME_SPACE_MAX_Y)
+		else if (arr[i].displacement.y < -GAME_SPACE_MAX_Y)
 		{
-			gravity_object_array[i].displacement.y += GAME_SPACE_MAX_Y * 2;
+			arr[i].displacement.y += GAME_SPACE_MAX_Y * 2;
 		}
 	}
 }
@@ -320,15 +380,11 @@ int decay_objects(struct GAME_OBJECT *arr, int n)
 	{
 		if (arr[i].lifespan > 0)
 		{
-			sprintf(debug_text, "check %d", arr[i].lifespan);
-			buffer_text(100, i * 16, debug_text);
 			arr[i].lifespan--;
 			// only checks if the lifespan has been zeroed out after checking it was greater than zero
 			// allows this field to be ignored for objects without a lifespan
 			if (arr[i].lifespan == 0)
 			{
-				sprintf(debug_text, "kill %d", i);
-				buffer_text(150, 0, debug_text);
 				kill_game_object(arr, n, i);
 				numDecayed++;
 				i--;
@@ -345,13 +401,13 @@ void fire_bullet()
 	{
 		struct vector2d displacement;
 		displacement.x = 0;
-		displacement.y = 15;
+		displacement.y = -15;
 		rotate_vector(&displacement, gravity_object_array[0].orientation * 180 / PI);
 		add_vector(&displacement, &gravity_object_array[0].displacement);
 		struct vector2d velocity;
 		velocity.x = 0;
 		velocity.y = BULLET_VELOCITY;
-		rotate_vector(&velocity, gravity_object_array[0].orientation * 180 / PI);
+		rotate_vector(&velocity, gravity_object_array[0].orientation * 180 / PI + 180);
 		// adds the velocity to the rocket velocity, helps make behavior more sane when firing at high velocity
 		add_vector(&velocity, &gravity_object_array[0].velocity);
 		bullet_array[bullet_counter]
@@ -375,60 +431,188 @@ void update_objects(void)
 	update_all_velocities();
 	update_all_displacements(gravity_object_array, gravity_object_counter);
 	center_around_rocket(&gravity_object_array[1], gravity_object_counter - 1, gravity_object_array[0].displacement);
-	wrap_around_gamespace();
+	wrap_around_gamespace(&gravity_object_array[1], gravity_object_counter - 1);
 	rotate_objects(gravity_object_array, gravity_object_counter);
+
 	// update the bullets
 	update_all_displacements(bullet_array, bullet_counter);
 	center_around_rocket(bullet_array, bullet_counter, gravity_object_array[0].displacement);
 	bullet_counter -= decay_objects(bullet_array, bullet_counter);
 	bullet_counter -= kill_outside_gamespace(bullet_array, bullet_counter);
 	rotate_objects(bullet_array, bullet_counter);
+
 	// update the particles
 	update_all_displacements(particle_array, particle_counter);
 	center_around_rocket(particle_array, particle_counter, gravity_object_array[0].displacement);
 	rotate_objects(particle_array, particle_counter);
 	particle_counter -= decay_objects(particle_array, particle_counter);
 	particle_counter -= kill_outside_gamespace(particle_array, particle_counter);
+
+	// update the starfield
+	center_around_rocket(star_array, star_counter, gravity_object_array[0].displacement);
+	wrap_around_gamespace(star_array, star_counter);
+
 	//zero out the rocket position
 	gravity_object_array[0].displacement.x = 0;
 	gravity_object_array[0].displacement.y = 0;
 	//damp the rocket velocity
 	multiply_vector(&gravity_object_array[0].velocity, ROCKET_VELOCITY_DAMPING_FACTOR);
+
+	// check if any bullets hit asteroids
+	check_bullet_asteroid_collisions();
 	//check for collisions between the rocket and asteroids
 	if (state == ALIVE && -1 != check_collisions(&gravity_object_array[0], &gravity_object_array[1], gravity_object_counter - 1))
 	{
 		kill_rocket();
-		state = EXPLODING;
+		set_state_exploding();
+		if (lives <= 0)
+		{
+			state = GAME_OVER;
+		}
 	}
 }
 
-void initialize_object(uint32_t sprite_index, float scale, float orientation, float rotation_rate, struct vector2d *displacement, struct vector2d *velocity, struct vector2d *acceleration, float mass, uint8_t movable)
+void spawn_starfield()
+{
+	struct vector2d displacement = {.x = 0, .y = 0};
+	struct GAME_OBJECT obj =
+		{
+			.sprite_index = STAR_INDEX,
+			.size = 1.0,
+			.orientation = 0.0,
+			.rotation_rate = 0.0,
+			.displacement = displacement,
+			.velocity = (struct vector2d){.x = 0.0, .y = 0.0},
+			.acceleration = (struct vector2d){.x = 0.0, .y = 0.0},
+			.mass = 0,
+			.movable = 0,
+			.visible = 1,
+			.lifespan = -1,
+			.type = STAR};
+	for (int i = 0; i < STAR_NUM; i++)
+	{
+		// generate a random location
+		displacement.x = rand() % (2 * GAME_SPACE_MAX_X) - GAME_SPACE_MAX_X;
+		displacement.y = rand() % (2 * GAME_SPACE_MAX_Y) - GAME_SPACE_MAX_Y;
+		obj.displacement = displacement;
+		star_array[i] = obj;
+		star_counter++;
+	}
+}
+
+// resets the rocket into its spawning state
+// note: does not provide any incrementation of gravity_object_counter
+// as this is only needed in some uses of spawn_rocket()
+void spawn_rocket()
+{
+	gravity_object_array[0] = (struct GAME_OBJECT){
+		.sprite_index = ROCKET_INDEX,
+		.size = ROCKET_SCALE,
+		.orientation = 0.0,
+		.rotation_rate = 0.0,
+		.displacement = (struct vector2d){.x = 0.0, .y = 0.0},
+		.velocity = (struct vector2d){.x = 0.0, .y = 0.0},
+		.acceleration = (struct vector2d){.x = 0.0, .y = 0.0},
+		.mass = ROCKET_MASS,
+		.movable = 1,
+		.visible = 1,
+		.lifespan = -1,
+		.type = ROCKET};
+}
+
+void initialize_object(uint32_t spriteIndex, float scale, float orientation, float rotation_rate, struct vector2d *displacement, struct vector2d *velocity, struct vector2d *acceleration, float mass, uint8_t movable)
 {
 	if (gravity_object_counter < GAME_OBJECT_NUM)
 	{
-		//assign to sprite
-		gravity_object_array[gravity_object_counter].sprite_index = sprite_index;
-		//assign the scale and orientation fields
-		gravity_object_array[gravity_object_counter].size = scale;
-		gravity_object_array[gravity_object_counter].orientation = orientation;
-		gravity_object_array[gravity_object_counter].rotation_rate = rotation_rate;
-		//assign displacement
-		gravity_object_array[gravity_object_counter].displacement.x = displacement->x;
-		gravity_object_array[gravity_object_counter].displacement.y = displacement->y;
-		//assign velocity
-		gravity_object_array[gravity_object_counter].velocity.x = velocity->x;
-		gravity_object_array[gravity_object_counter].velocity.y = velocity->y;
-		//assign acceleration
-		gravity_object_array[gravity_object_counter].acceleration.x = acceleration->x;
-		gravity_object_array[gravity_object_counter].acceleration.y = acceleration->y;
-		//assign mass
-		gravity_object_array[gravity_object_counter].mass = mass;
-		//select if this object should move or not (should the position be updated?) 0 = don't move, 1 = do move
-		gravity_object_array[gravity_object_counter].movable = movable;
-		gravity_object_array[gravity_object_counter].lifespan = -1;
-		gravity_object_array[gravity_object_counter].visible = 1;
-		//increment game object counter
+		gravity_object_array[gravity_object_counter] = (struct GAME_OBJECT){
+			.sprite_index = spriteIndex,
+			.size = scale,
+			.orientation = orientation,
+			.rotation_rate = rotation_rate,
+			.displacement = *displacement,
+			.velocity = *velocity,
+			.acceleration = *acceleration,
+			.mass = mass,
+			.movable = movable,
+			.visible = 1,
+			.lifespan = -1,
+			.type = 0};
 		gravity_object_counter++;
+		// //assign to sprite
+		// gravity_object_array[gravity_object_counter].sprite_index = spriteIndex;
+		// //assign the scale and orientation fields
+		// gravity_object_array[gravity_object_counter].size = scale;
+		// gravity_object_array[gravity_object_counter].orientation = orientation;
+		// gravity_object_array[gravity_object_counter].rotation_rate = rotation_rate;
+		// //assign displacement
+		// gravity_object_array[gravity_object_counter].displacement.x = displacement->x;
+		// gravity_object_array[gravity_object_counter].displacement.y = displacement->y;
+		// //assign velocity
+		// gravity_object_array[gravity_object_counter].velocity.x = velocity->x;
+		// gravity_object_array[gravity_object_counter].velocity.y = velocity->y;
+		// //assign acceleration
+		// gravity_object_array[gravity_object_counter].acceleration.x = acceleration->x;
+		// gravity_object_array[gravity_object_counter].acceleration.y = acceleration->y;
+		// //assign mass
+		// gravity_object_array[gravity_object_counter].mass = mass;
+		// //select if this object should move or not (should the position be updated?) 0 = don't move, 1 = do move
+		// gravity_object_array[gravity_object_counter].movable = movable;
+		// gravity_object_array[gravity_object_counter].lifespan = -1;
+		// gravity_object_array[gravity_object_counter].visible = 1;
+		// //increment game object counter
+		// gravity_object_counter++;
+	}
+}
+
+void spawn_asteroid(object_type asteroid_type, struct vector2d displacement, struct vector2d velocity)
+{
+	gravity_object_array[gravity_object_counter] = (struct GAME_OBJECT){
+		.sprite_index = ASTEROID_INDEX,
+		.size = asteroid_sizes[asteroid_type],
+		.orientation = ((float)rand()) / RAND_MAX * 2 * PI,
+		.rotation_rate = (((float)rand()) / RAND_MAX - 0.5) * ASTEROID_LARGE_MAX_ROTATION_RATE * asteroid_type,
+		.displacement = displacement,
+		.velocity = velocity,
+		.acceleration = (struct vector2d){.x = 0, .y = 0},
+		.mass = asteroid_masses[asteroid_type],
+		.movable = 1,
+		.visible = 1,
+		.lifespan = -1,
+		.type = asteroid_type};
+	gravity_object_counter++;
+}
+
+// returns a random vector with the specified magnitude
+struct vector2d random_vector(float magnitude)
+{
+	struct vector2d vec = {.x = magnitude, .y = 0};
+	rotate_vector(&vec, ((float)rand()) / RAND_MAX * 360);
+	return vec;
+}
+
+// spawns a large asteroid at a random location just outside the screen if the interval is correct
+void generate_fresh_asteroids()
+{
+	asteroid_spawn_counter--;
+	if (asteroid_spawn_counter == 0)
+	{
+		// if there are large asteroid spots free
+		// slots free are equal to the number of game objects divided by 4 due to the possibility of generating 4 more game objects
+		// 1 is subtracted for the rocket
+		if (gravity_object_counter < GAME_OBJECT_NUM / 4 - 1)
+		{
+			// spawn an asteroid with random velocity just off screen
+			struct vector2d displacement = random_vector(240);
+			struct vector2d velocity = random_vector(((float)rand()) / RAND_MAX * ASTEROID_MAX_INIT_VELOCITY);
+			spawn_asteroid(LARGE_ASTEROID, displacement, velocity);
+			// initialize_object(ASTEROID_INDEX,
+			// 				  asteroid_sizes[LARGE_ASTEROID],
+			// 				  ((float)rand()) / RAND_MAX * 2 * PI,
+			// 				  (((float)rand()) / RAND_MAX - 0.5) * ASTEROID_LARGE_MAX_ROTATION_RATE,
+			// 				  &displacement, &velocity, &acceleration, asteroid_masses[LARGE_ASTEROID], 1);
+		}
+		// always reset the timer so asteroids will spawn as normal when slots are available
+		asteroid_spawn_counter = rand() % (ASTEROID_SPAWN_COUNTER_MAX - ASTEROID_SPAWN_COUNTER_MIN) + ASTEROID_SPAWN_COUNTER_MIN;
 	}
 }
 
@@ -448,6 +632,18 @@ void add_array_to_display_buffer(struct GAME_OBJECT *arr, int n)
 	}
 }
 
+void display_lives()
+{
+	struct vector2d livesLocation = {
+		.x = -MAX_X_COORD / 2 + 10,
+		.y = -MAX_Y_COORD / 2 + 34};
+	for (int i = 0; i < lives; i++)
+	{
+		draw_entity_to_buffer(ROCKET_INDEX, livesLocation, 0.6, 0);
+		livesLocation.x += 20;
+	}
+}
+
 void render_gamestate_to_LCD(void)
 {
 	// for (int i = 0; i < gravity_object_counter; i++)
@@ -461,12 +657,48 @@ void render_gamestate_to_LCD(void)
 	add_array_to_display_buffer(gravity_object_array, gravity_object_counter);
 	add_array_to_display_buffer(bullet_array, bullet_counter);
 	add_array_to_display_buffer(particle_array, particle_counter);
+	add_array_to_display_buffer(star_array, star_counter);
+	display_lives();
+	// display score info
+	sprintf(debug_text, "%d", score);
+	buffer_text(5, 5, debug_text);
 	buffer_to_LCD();
+}
+
+// updates the state of the director to reflect the current mode and any changes that have occurred
+void game_state_handler()
+{
+	mode_countdown--;
+	if (mode_countdown == 0 && lives > 0)
+	{
+		if (state == RESPAWNING)
+		{
+			state = ALIVE;
+			gravity_object_array[0].visible = 1;
+		}
+		else if (state == EXPLODING)
+		{
+			// only respawn if lives remaining
+			state = RESPAWNING;
+			spawn_rocket();
+			mode_countdown = RESPAWNING_GAME_CYCLES;
+		}
+	}
+	else if (state == GAME_OVER)
+	{
+		buffer_text(100, 100, "GAME OVER");
+	}
+	// handle blinking in respawning state
+	if (state == RESPAWNING && mode_countdown % 5 == 0)
+	{
+		gravity_object_array[0].visible = !gravity_object_array[0].visible;
+	}
 }
 
 //this function will be called whenever you want to draw a new frame
 void update_game_space(void)
 {
+	//TODO spawn asteroids
 	//if debug is true, print debug info
 	if (debug)
 	{
@@ -474,10 +706,11 @@ void update_game_space(void)
 	}
 	//update the objects
 	update_objects();
-	int col = check_collisions(&gravity_object_array[0], &gravity_object_array[1], gravity_object_counter - 1);
-	sprintf(debug_text, "collision %d", col);
-	buffer_text(0, 0, debug_text);
-	check_bullet_asteroid_collisions();
+	//handles any necessary processes based on the game state
+	game_state_handler();
+	// spawn asteroids if appropriate (checks done in generate_fresh_asteroids)
+	generate_fresh_asteroids();
+	//TODO have a collision handling call here
 	//update the display
 	render_gamestate_to_LCD();
 }
@@ -511,17 +744,18 @@ void print_object_values(void)
 // applies control inputs to the in-game rocket
 void control_input(int x, int y, uint8_t thrust, uint8_t fire)
 {
-	//always adjust the direction, even when respawning
-	//doesn't do anything when dead because sprite is hidden
-	x -= 128;
-	// allow some dead spot in middle, outside of that range rotate it
-	if (x > 30 || x < -30)
+	// only do something in states where the controls should do anything, those being fully alive and immune respawning
+	if (state == ALIVE || state == RESPAWNING)
 	{
-		gravity_object_array[0].orientation += x * ROCKET_ROTATION_RATE;
-	}
-	//TODO add another case to start the game when in the respawning state
-	if (state == ALIVE)
-	{
+		// handle joystick input
+		// center the input around 0
+		x -= 128;
+		// allow some dead spot in middle, outside of that range rotate it
+		if (x > 30 || x < -30)
+		{
+			gravity_object_array[0].orientation += x * ROCKET_ROTATION_RATE;
+		}
+
 		// apply thrust if the thrust button is pressed
 		if (thrust)
 		{
@@ -532,7 +766,7 @@ void control_input(int x, int y, uint8_t thrust, uint8_t fire)
 			//create a vector with the magnitude of the thrust
 			deltaV.x = 0;
 			deltaV.y = ROCKET_THRUST;
-			rotate_vector(&deltaV, gravity_object_array[0].orientation * 180 / PI);
+			rotate_vector(&deltaV, gravity_object_array[0].orientation * 180 / PI + 180);
 			add_vector(&gravity_object_array[0].velocity, &deltaV);
 		}
 		// otherwise set/switch back to the regular rocket sprite
@@ -540,6 +774,7 @@ void control_input(int x, int y, uint8_t thrust, uint8_t fire)
 		{
 			gravity_object_array[0].sprite_index = ROCKET_INDEX;
 		}
+
 		// fire bullet if the "fire" button is pressed
 		if (fire && fire_button_released)
 		{
@@ -556,50 +791,27 @@ void control_input(int x, int y, uint8_t thrust, uint8_t fire)
 
 void start_game(void)
 {
-	struct vector2d displacement_0, velocity_0, acceleration_0, displacement_1, velocity_1, acceleration_1,
-		displacement_2, velocity_2, acceleration_2;
-	float mass_0, mass_1, mass_2;
-	uint8_t movable_0, movable_1, movable_2;
+	lives = 3;
+	score = 0;
 	gravity_object_counter = 0;
-	//astroid object 0
-	displacement_0.x = 10.4;
-	displacement_0.y = 20.4;
-	velocity_0.x = -0.1;
-	velocity_0.y = -0.1;
-	acceleration_0.x = 0.0;
-	acceleration_0.y = 0.0;
-	mass_0 = .01;
-	movable_0 = 1;
-	//astroid object 1
-	displacement_1.x = 60.5;
-	displacement_1.y = 30.5;
-	velocity_1.x = .1;
-	velocity_1.y = .1;
-	acceleration_1.x = 0.0;
-	acceleration_1.y = 0.0;
-	mass_1 = .1;
-	movable_1 = 1;
-	//astroid object 2 (unmovable
-	displacement_2.x = MAX_X_COORD / 2;
-	displacement_2.y = MAX_Y_COORD / 2;
-	velocity_2.x = 0.0;
-	velocity_2.y = 0.0;
-	acceleration_2.x = 0.0;
-	acceleration_2.y = 0.0;
-	mass_2 = .1;
-	movable_2 = 0;
+	bullet_counter = 0;
+	particle_counter = 0;
 
-	//initialize the display engine
-	//initialize_display_engine();
-	//set visibilities for two asteroids
-	// update_sprite_visibility(0, 1);
-	// update_sprite_visibility(1, 1);
-	// update_sprite_visibility(2, 1);
-	//initialize three asteroid objects
+	//TODO initialize starfield
 
-	//initialize them using the initialization function
-	// initialize_object(0, &displacement_0, &velocity_0, &acceleration_0, mass_0, movable_0);
-	// initialize_object(1, &displacement_1, &velocity_1, &acceleration_1, mass_1, movable_1);
-	// initialize_object(2, &displacement_2, &velocity_2, &acceleration_2, mass_2, movable_2);
-	//ready
+	struct vector2d dship;
+	dship.x = 0;
+	dship.y = 0;
+	struct vector2d zeroVector;
+	zeroVector.x = 0;
+	zeroVector.y = 0;
+
+	spawn_rocket();
+	gravity_object_counter++;
+
+	spawn_starfield();
+
+	state = RESPAWNING;
+
+	asteroid_spawn_counter = ASTEROID_SPAWN_COUNTER_MIN; //rand() % (ASTEROID_SPAWN_COUNTER_MAX - ASTEROID_SPAWN_COUNTER_MIN) + ASTEROID_SPAWN_COUNTER_MIN;
 }

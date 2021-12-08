@@ -6,9 +6,11 @@
 #ifndef __DIRECTOR_H__
 #define __DIRECTOR_H__
 
-#define GAME_OBJECT_NUM 100
+#define GAME_OBJECT_NUM 20
 #define BULLET_NUM 20
 #define PARTICLE_NUM 30
+#define STAR_NUM 100
+
 #define GRAVITATIONAL_CONSTANT 1
 
 typedef enum
@@ -16,7 +18,8 @@ typedef enum
     LARGE_ASTEROID = 0,
     MEDIUM_ASTEROID = 1,
     SMALL_ASTEROID = 2,
-    ROCKET
+    ROCKET,
+    STAR
 } object_type;
 
 typedef enum

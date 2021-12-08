@@ -36,11 +36,16 @@ Sprite asteroid;
 #define ROCKET_LINES 3
 #define ROCKET_FIRE_LINES 5
 int rocket_fire_x[] = {0, -12, -10, 10, 12, 0, -5, 0, 5, 0};
-int rocket_fire_y[] = {15, -15, -10, -10, -15, 15, -10, -25, -10, -25};
+int rocket_fire_y[] = {-15, 15, 10, 10, 15, -15, 10, 25, 10, 25};
 
 #define BULLET_LINES 4
 int bullet_x[] = {-1, 1, 1, 1, 1, -1, -1, -1};
 int bullet_y[] = {-1, -1, -1, 1, 1, 1, 1, -1};
+
+// making the stars a sprite is a little unnecessary,
+// but it allows the standard game object system to be used for them
+#define STAR_LINES 1
+int star[] = {0, 0};
 
 float calculate_sprite_radius(int sprite_index)
 {
@@ -93,6 +98,13 @@ void init_vector_render_engine()
     sprites[ROCKET_EXPLODE_3_INDEX].number_of_lines = 1;
     sprites[ROCKET_EXPLODE_3_INDEX].endpoint_x_data = rocket_fire_x + 4;
     sprites[ROCKET_EXPLODE_3_INDEX].endpoint_y_data = rocket_fire_y + 4;
+    //initialize the star sprites
+    sprites[STAR_INDEX].number_of_lines = STAR_LINES;
+    sprites[STAR_INDEX].endpoint_x_data = star;
+    sprites[STAR_INDEX].endpoint_y_data = star;
+    // sprites[STAR_INDEX].number_of_lines = STAR_LINES;
+    // sprites[STAR_INDEX].endpoint_x_data = rocket_fire_x;
+    // sprites[STAR_INDEX].endpoint_y_data = rocket_fire_y;
 }
 
 // Applies rotational and scale transforms to the passed sprite
