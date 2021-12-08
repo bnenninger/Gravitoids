@@ -9,10 +9,20 @@
 
 // don't change this to index from zero
 // it doesn't work, no idea why
-#define ROCKET_INDEX 1
-#define ASTEROID_INDEX 2
-#define ROCKET_FIRE_INDEX 3
-#define BULLET_INDEX 4
+// #define ROCKET_INDEX 1
+// #define ASTEROID_INDEX 2
+// #define ROCKET_FIRE_INDEX 3
+// #define BULLET_INDEX 4
+typedef enum
+{
+	ROCKET_INDEX,
+	ASTEROID_INDEX,
+	ROCKET_FIRE_INDEX,
+	BULLET_INDEX,
+	ROCKET_EXPLODE_1_INDEX,
+	ROCKET_EXPLODE_2_INDEX,
+	ROCKET_EXPLODE_3_INDEX
+} sprite_index;
 
 // struct for storing entity info
 // each object rendered in the game will be an entity

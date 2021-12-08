@@ -19,7 +19,7 @@ typedef struct
     float radius
 } Sprite;
 
-Sprite sprites[NUM_SPRITES + 1];
+Sprite sprites[NUM_SPRITES];
 
 float x_data_buffer[MAX_SPRITE_LINES * 2];
 float y_data_buffer[MAX_SPRITE_LINES * 2];
@@ -29,14 +29,14 @@ int asteroid_x[] = {0, 2, 2, 2, 2, 4, 4, 3, 3, 1, 1, 0, 0, -2, -2, -4, -4, -3, -
 int asteroid_y[] = {4, 3, 3, 1, 1, 0, 0, -2, -2, -2, -2, -3, -3, -2, -2, 0, 0, 3, 3, 4};
 Sprite asteroid;
 
-#define ROCKET_LINES 3
-int rocket_x[] = {0, -10, -10, 10, 10, 0};
-int rocket_y[] = {15, -10, -10, -10, -10, 15};
-Sprite rocket;
+// int rocket_x[] = {0, -12, -10, 10, 12, 0};
+// int rocket_y[] = {15, -15, -10, -10, -15, 15};
+// Sprite rocket;
 
+#define ROCKET_LINES 3
 #define ROCKET_FIRE_LINES 5
-int rocket_fire_x[] = {0, -10, -10, 10, 10, 0, -5, 0, 5, 0};
-int rocket_fire_y[] = {15, -10, -10, -10, -10, 15, -10, -25, -10, -25};
+int rocket_fire_x[] = {0, -12, -10, 10, 12, 0, -5, 0, 5, 0};
+int rocket_fire_y[] = {15, -15, -10, -10, -15, 15, -10, -25, -10, -25};
 
 #define BULLET_LINES 4
 int bullet_x[] = {-1, 1, 1, 1, 1, -1, -1, -1};
@@ -61,10 +61,11 @@ float calculate_sprite_radius(int sprite_index)
 
 void init_vector_render_engine()
 {
+    // initialize all the sprites
     // initialize the rocket sprite
     sprites[ROCKET_INDEX].number_of_lines = ROCKET_LINES;
-    sprites[ROCKET_INDEX].endpoint_x_data = rocket_x;
-    sprites[ROCKET_INDEX].endpoint_y_data = rocket_y;
+    sprites[ROCKET_INDEX].endpoint_x_data = rocket_fire_x;
+    sprites[ROCKET_INDEX].endpoint_y_data = rocket_fire_y;
     sprites[ROCKET_INDEX].radius = calculate_sprite_radius(ROCKET_INDEX);
     //initialize the asteroid sprite
     sprites[ASTEROID_INDEX]
@@ -77,12 +78,21 @@ void init_vector_render_engine()
     sprites[ROCKET_FIRE_INDEX].endpoint_x_data = rocket_fire_x;
     sprites[ROCKET_FIRE_INDEX].endpoint_y_data = rocket_fire_y;
     sprites[ROCKET_FIRE_INDEX].radius = calculate_sprite_radius(ROCKET_FIRE_INDEX);
-
     //initializes the bullet sprite
     sprites[BULLET_INDEX].number_of_lines = BULLET_LINES;
     sprites[BULLET_INDEX].endpoint_x_data = bullet_x;
     sprites[BULLET_INDEX].endpoint_y_data = bullet_y;
     sprites[BULLET_INDEX].radius = calculate_sprite_radius(BULLET_INDEX);
+    //initialize the rocket exploding sprites
+    sprites[ROCKET_EXPLODE_1_INDEX].number_of_lines = 1;
+    sprites[ROCKET_EXPLODE_1_INDEX].endpoint_x_data = rocket_fire_x;
+    sprites[ROCKET_EXPLODE_1_INDEX].endpoint_y_data = rocket_fire_y;
+    sprites[ROCKET_EXPLODE_2_INDEX].number_of_lines = 1;
+    sprites[ROCKET_EXPLODE_2_INDEX].endpoint_x_data = rocket_fire_x + 2;
+    sprites[ROCKET_EXPLODE_2_INDEX].endpoint_y_data = rocket_fire_y + 2;
+    sprites[ROCKET_EXPLODE_3_INDEX].number_of_lines = 1;
+    sprites[ROCKET_EXPLODE_3_INDEX].endpoint_x_data = rocket_fire_x + 4;
+    sprites[ROCKET_EXPLODE_3_INDEX].endpoint_y_data = rocket_fire_y + 4;
 }
 
 // Applies rotational and scale transforms to the passed sprite

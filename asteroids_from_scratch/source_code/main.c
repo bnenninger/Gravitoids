@@ -83,8 +83,8 @@ int main(void)
     zeroVector.y = 0;
 
     initialize_object(ROCKET_INDEX, 1, 0.0, 0.0, &dship, &vship, &zeroVector, 0, 1);
-    initialize_object(BULLET_INDEX, 6, 0.0, 5.0, &dasteroid, &vasteroid, &zeroVector, 0, 0);
-    initialize_object(ASTEROID_INDEX, 10, 0.0, 5.0, &dasteroid2, &vasteroid, &zeroVector, 0, 0);
+    initialize_object(ASTEROID_INDEX, 6, 0.0, 0.1, &dasteroid, &vasteroid, &zeroVector, 10, 0);
+    initialize_object(ASTEROID_INDEX, 10, 0.0, 0.1, &dasteroid2, &vasteroid, &zeroVector, 10, 0);
 
     // render_gamestate_to_LCD();
     update_game_space();

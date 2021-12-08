@@ -3,9 +3,29 @@
 #include "vector.h"
 #include "vector_render_engine.h"
 
+#ifndef __DIRECTOR_H__
+#define __DIRECTOR_H__
+
 #define GAME_OBJECT_NUM 100
 #define BULLET_NUM 20
+#define PARTICLE_NUM 30
 #define GRAVITATIONAL_CONSTANT 1
+
+typedef enum
+{
+    LARGE_ASTEROID = 0,
+    MEDIUM_ASTEROID = 1,
+    SMALL_ASTEROID = 2,
+    ROCKET
+} object_type;
+
+typedef enum
+{
+    ALIVE,
+    EXPLODING,
+    RESPAWNING,
+    GAME_OVER
+} game_state;
 
 struct GAME_OBJECT
 {
@@ -29,6 +49,7 @@ struct GAME_OBJECT
     uint8_t movable;
     uint8_t visible;
     uint16_t lifespan;
+    object_type type;
 };
 
 struct vector2d calculate_gravity(uint32_t affected_object_index, uint32_t cause_object_index);
@@ -45,3 +66,5 @@ void update_game_space(void);
 void print_object_values(void);
 void control_input(int x, int y, uint8_t thrust, uint8_t fire);
 void start_game(void);
+
+#endif
