@@ -174,3 +174,11 @@ void buffer_to_LCD()
         currentFramebuffer[i] = 0;
     }
 }
+
+void clear_buffer()
+{
+    for (int i = 0; i < (MAX_X_COORD * MAX_Y_COORD * 2) / BUFFER_ITEM_WIDTH; i++)
+    {
+        framebufferSpace[i] = 0;
+    }
+}

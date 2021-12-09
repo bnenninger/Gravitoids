@@ -5,7 +5,7 @@
 #ifndef __VECTOR_ENGINE_H__
 #define __VECTOR_ENGINE_H__
 
-#define NUM_SPRITES 8
+#define NUM_SPRITES 9
 
 // don't change this to index from zero
 // it doesn't work, no idea why
@@ -21,9 +21,9 @@ typedef enum
 	BULLET_INDEX,
 	ROCKET_EXPLODE_1_INDEX,
 	ROCKET_EXPLODE_2_INDEX,
-	// ROCKET_EXPLODE_3_INDEX
 	ROCKET_EXPLODE_3_INDEX,
-	STAR_INDEX
+	STAR_INDEX,
+	BLACK_HOLE_INDEX
 } sprite_index;
 
 // struct for storing entity info

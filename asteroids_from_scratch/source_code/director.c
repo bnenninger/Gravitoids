@@ -36,7 +36,7 @@
 #define ASTEROID_SPAWN_COUNTER_MAX 90 // delay of 4.5 seconds
 #define ASTEROID_SPAWN_COUNTER_MIN 30 // delay of 1.5 seconds
 // black hole parameters
-#define BLACK_HOLE_SCALE 20
+#define BLACK_HOLE_SCALE 3
 #define BLACK_HOLE_MASS 20
 #define BLACK_HOLE_MAX_ROTATION_RATE 0.01
 #define BLACK_HOLE_MAX_NUMBER 9
@@ -56,7 +56,7 @@ float asteroid_sizes[] = {8.0, 6.0, 3.0};
 //game variables
 uint32_t score = 0;
 uint8_t lives = 3;
-game_state state = ALIVE;
+volatile game_state state = ALIVE;
 uint32_t asteroid_spawn_counter;
 // tracks the number of game cycles left in a specific mode
 uint16_t mode_countdown = RESPAWNING_GAME_CYCLES;
@@ -596,7 +596,7 @@ uint8_t spawn_black_holes()
 		if (((int)black_hole_counter < BLACK_HOLE_MAX_NUMBER) && ((int)gravity_object_counter < GAME_OBJECT_NUM))
 		{
 			gravity_object_array[gravity_object_counter] = (struct GAME_OBJECT){
-				.sprite_index = ASTEROID_INDEX,
+				.sprite_index = BLACK_HOLE_INDEX,
 				.size = BLACK_HOLE_SCALE,
 				.orientation = ((float)rand()) / RAND_MAX * 2 * PI,
 				.rotation_rate = (((float)rand()) / RAND_MAX - 0.5) * BLACK_HOLE_MAX_ROTATION_RATE,
@@ -680,9 +680,6 @@ void add_array_to_display_buffer(struct GAME_OBJECT *arr, int n)
 		struct GAME_OBJECT *obj = arr + i;
 		if (obj->visible)
 		{
-			// struct vector2d displacement = obj->displacement;
-			// displacement.x = displacement.x - gravity_object_array[0].displacement.x + MAX_X_COORD / 2;
-			// displacement.y = displacement.y - gravity_object_array[0].displacement.y + MAX_Y_COORD / 2;
 			draw_entity_to_buffer(obj->sprite_index, obj->displacement, obj->size, obj->orientation);
 		}
 	}
@@ -702,14 +699,6 @@ void display_lives()
 
 void render_gamestate_to_LCD(void)
 {
-	// for (int i = 0; i < gravity_object_counter; i++)
-	// {
-	// 	struct GAME_OBJECT *obj = &gravity_object_array[i];
-	// 	// struct vector2d displacement = obj->displacement;
-	// 	// displacement.x = displacement.x - gravity_object_array[0].displacement.x + MAX_X_COORD / 2;
-	// 	// displacement.y = displacement.y - gravity_object_array[0].displacement.y + MAX_Y_COORD / 2;
-	// 	draw_entity_to_buffer(obj->sprite_index, obj->displacement, obj->size, obj->orientation);
-	// }
 	add_array_to_display_buffer(gravity_object_array, gravity_object_counter);
 	add_array_to_display_buffer(bullet_array, bullet_counter);
 	add_array_to_display_buffer(particle_array, particle_counter);
@@ -854,13 +843,7 @@ void start_game(void)
 	large_asteroid_counter = 0;
 	bullet_counter = 0;
 	particle_counter = 0;
-
-	struct vector2d dship;
-	dship.x = 0;
-	dship.y = 0;
-	struct vector2d zeroVector;
-	zeroVector.x = 0;
-	zeroVector.y = 0;
+	star_counter = 0;
 
 	spawn_rocket();
 	gravity_object_counter++;

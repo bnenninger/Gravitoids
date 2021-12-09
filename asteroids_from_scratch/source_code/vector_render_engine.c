@@ -42,6 +42,10 @@ int rocket_fire_y[] = {-15, 15, 10, 10, 15, -15, 10, 25, 10, 25};
 int bullet_x[] = {-1, 1, 1, 1, 1, -1, -1, -1};
 int bullet_y[] = {-1, -1, -1, 1, 1, 1, 1, -1};
 
+#define BLACK_HOLE_LINES 8
+int black_hole_x[] = {10, 7, 7, 0, 0, -7, -7, -10, -10, -7, -7, 0, 0, 7, 7, 10};
+int black_hole_y[] = {0, 7, 7, 10, 10, 7, 7, 0, 0, -7, -7, -10, -10, -7, -7, 0};
+
 // making the stars a sprite is a little unnecessary,
 // but it allows the standard game object system to be used for them
 #define STAR_LINES 1
@@ -102,9 +106,11 @@ void init_vector_render_engine()
     sprites[STAR_INDEX].number_of_lines = STAR_LINES;
     sprites[STAR_INDEX].endpoint_x_data = star;
     sprites[STAR_INDEX].endpoint_y_data = star;
-    // sprites[STAR_INDEX].number_of_lines = STAR_LINES;
-    // sprites[STAR_INDEX].endpoint_x_data = rocket_fire_x;
-    // sprites[STAR_INDEX].endpoint_y_data = rocket_fire_y;
+    //initialize the black hole sprites
+    sprites[BLACK_HOLE_INDEX].number_of_lines = BLACK_HOLE_LINES;
+    sprites[BLACK_HOLE_INDEX].endpoint_x_data = black_hole_x;
+    sprites[BLACK_HOLE_INDEX].endpoint_y_data = black_hole_y;
+    sprites[BLACK_HOLE_INDEX].radius = calculate_sprite_radius(BLACK_HOLE_INDEX);
 }
 
 // Applies rotational and scale transforms to the passed sprite

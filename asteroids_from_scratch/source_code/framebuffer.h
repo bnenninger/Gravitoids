@@ -16,5 +16,6 @@ void buffer_char(uint16_t Xpos, uint16_t Ypos, uint8_t ASCI);
 void buffer_text(uint16_t Xpos, uint16_t Ypos, uint8_t *str);
 void buffer_text_centered(uint16_t Xpos, uint16_t Ypos, uint8_t *str);
 void buffer_to_LCD();
+void clear_buffer();
 
 #endif
