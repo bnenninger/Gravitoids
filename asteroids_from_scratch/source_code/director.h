@@ -6,9 +6,9 @@
 #ifndef __DIRECTOR_H__
 #define __DIRECTOR_H__
 
-#define GAME_OBJECT_NUM 20
+#define GAME_OBJECT_NUM 40
 #define BULLET_NUM 20
-#define PARTICLE_NUM 30
+#define PARTICLE_NUM 10
 #define STAR_NUM 100
 
 #define GRAVITATIONAL_CONSTANT 1
@@ -53,6 +53,7 @@ struct GAME_OBJECT
     uint8_t visible;
     uint16_t lifespan;
     object_type type;
+    uint8_t indestructible;
 };
 
 struct vector2d calculate_gravity(uint32_t affected_object_index, uint32_t cause_object_index);
@@ -63,11 +64,17 @@ void update_displacement(struct GAME_OBJECT *obj);
 void update_sprite(uint32_t object_index);
 void update_objects(void);
 void initialize_object(uint32_t sprite_index, float scale, float orientation, float rotation_rate, struct vector2d *displacement, struct vector2d *velocity, struct vector2d *acceleration, float mass, uint8_t movable);
+uint8_t spawn_black_holes();
 
 void render_gamestate_to_LCD(void);
 void update_game_space(void);
 void print_object_values(void);
 void control_input(int x, int y, uint8_t thrust, uint8_t fire);
 void start_game(void);
+
+int get_score();
+int get_lives();
+int get_max_lives();
+uint8_t is_game_over();
 
 #endif

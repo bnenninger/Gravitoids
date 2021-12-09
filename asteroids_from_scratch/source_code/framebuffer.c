@@ -12,6 +12,7 @@ fit within the memory of the LPC1768.
 #include "framebuffer.h"
 #include "GLCD.h"
 #include "AsciiLib.h"
+#include <string.h>
 
 #define BUFFER_ITEM_WIDTH 32
 
@@ -124,6 +125,11 @@ void buffer_text(uint16_t Xpos, uint16_t Ypos, uint8_t *str)
             Ypos = 0;
         }
     } while (*str != 0);
+}
+// adds a line of text to the framebuffer such that it is centered on the Xpos
+void buffer_text_centered(uint16_t Xpos, uint16_t Ypos, uint8_t *str)
+{
+    buffer_text(Xpos - 8 * strlen(str) / 2, Ypos, str);
 }
 
 // transfers the contents of the buffer to the LCD screen

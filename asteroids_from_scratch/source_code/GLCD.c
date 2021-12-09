@@ -254,7 +254,7 @@ void LCD_Initialization(void)
 
   // Cris: this one is the "if" that works for LCD displays of the NEW LandTiger boards (2015-2019)!
   ///*---
-	/*
+
   if (DeviceCode == 0x9325 || DeviceCode == 0x9328)
   {
     LCD_Code = ILI9325;
@@ -323,109 +323,148 @@ void LCD_Initialization(void)
     LCD_WriteReg(0x0020, 0x0000);
     LCD_WriteReg(0x0021, 0x0000);
   }
-	*/
+
   //---*/
   // Cris: this one is the "if" that works for LCD displays of the OLD LandTiger boards (2013-2015)!
-  
-  if( DeviceCode == 0x8989 )
+
+  if (DeviceCode == 0x8989)
   {
-      LCD_Code = SSD1289;
-      LCD_WriteReg(0x0000,0x0001);    delay_ms(50); 
-      LCD_WriteReg(0x0003,0xA8A4);    delay_ms(50);   
-      LCD_WriteReg(0x000C,0x0000);    delay_ms(50);   
-      LCD_WriteReg(0x000D,0x080C);    delay_ms(50);   
-      LCD_WriteReg(0x000E,0x2B00);    delay_ms(50);   
-      LCD_WriteReg(0x001E,0x00B0);    delay_ms(50);   
-      LCD_WriteReg(0x0001,0x2B3F);    delay_ms(50);   //320*240 0x2B3F
-      LCD_WriteReg(0x0002,0x0600);    delay_ms(50);
-      LCD_WriteReg(0x0010,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0011,0x6070);    delay_ms(50);   //0x6070
-      LCD_WriteReg(0x0005,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0006,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0016,0xEF1C);    delay_ms(50);
-      LCD_WriteReg(0x0017,0x0003);    delay_ms(50);
-      LCD_WriteReg(0x0007,0x0133);    delay_ms(50);         
-      LCD_WriteReg(0x000B,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x000F,0x0000);    delay_ms(50);   
-      LCD_WriteReg(0x0041,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0042,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0048,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0049,0x013F);    delay_ms(50);
-      LCD_WriteReg(0x004A,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x004B,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0044,0xEF00);    delay_ms(50);
-      LCD_WriteReg(0x0045,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0046,0x013F);    delay_ms(50);
-      LCD_WriteReg(0x0030,0x0707);    delay_ms(50);
-      LCD_WriteReg(0x0031,0x0204);    delay_ms(50);
-      LCD_WriteReg(0x0032,0x0204);    delay_ms(50);
-      LCD_WriteReg(0x0033,0x0502);    delay_ms(50);
-      LCD_WriteReg(0x0034,0x0507);    delay_ms(50);
-      LCD_WriteReg(0x0035,0x0204);    delay_ms(50);
-      LCD_WriteReg(0x0036,0x0204);    delay_ms(50);
-      LCD_WriteReg(0x0037,0x0502);    delay_ms(50);
-      LCD_WriteReg(0x003A,0x0302);    delay_ms(50);
-      LCD_WriteReg(0x003B,0x0302);    delay_ms(50);
-      LCD_WriteReg(0x0023,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0024,0x0000);    delay_ms(50);
-      LCD_WriteReg(0x0025,0x8000);    delay_ms(50);
-      LCD_WriteReg(0x004f,0);     
-      LCD_WriteReg(0x004e,0);      
-  }	
-	
+    LCD_Code = SSD1289;
+    LCD_WriteReg(0x0000, 0x0001);
+    delay_ms(50);
+    LCD_WriteReg(0x0003, 0xA8A4);
+    delay_ms(50);
+    LCD_WriteReg(0x000C, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x000D, 0x080C);
+    delay_ms(50);
+    LCD_WriteReg(0x000E, 0x2B00);
+    delay_ms(50);
+    LCD_WriteReg(0x001E, 0x00B0);
+    delay_ms(50);
+    LCD_WriteReg(0x0001, 0x2B3F);
+    delay_ms(50); //320*240 0x2B3F
+    LCD_WriteReg(0x0002, 0x0600);
+    delay_ms(50);
+    LCD_WriteReg(0x0010, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0011, 0x6070);
+    delay_ms(50); //0x6070
+    LCD_WriteReg(0x0005, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0006, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0016, 0xEF1C);
+    delay_ms(50);
+    LCD_WriteReg(0x0017, 0x0003);
+    delay_ms(50);
+    LCD_WriteReg(0x0007, 0x0133);
+    delay_ms(50);
+    LCD_WriteReg(0x000B, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x000F, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0041, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0042, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0048, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0049, 0x013F);
+    delay_ms(50);
+    LCD_WriteReg(0x004A, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x004B, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0044, 0xEF00);
+    delay_ms(50);
+    LCD_WriteReg(0x0045, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0046, 0x013F);
+    delay_ms(50);
+    LCD_WriteReg(0x0030, 0x0707);
+    delay_ms(50);
+    LCD_WriteReg(0x0031, 0x0204);
+    delay_ms(50);
+    LCD_WriteReg(0x0032, 0x0204);
+    delay_ms(50);
+    LCD_WriteReg(0x0033, 0x0502);
+    delay_ms(50);
+    LCD_WriteReg(0x0034, 0x0507);
+    delay_ms(50);
+    LCD_WriteReg(0x0035, 0x0204);
+    delay_ms(50);
+    LCD_WriteReg(0x0036, 0x0204);
+    delay_ms(50);
+    LCD_WriteReg(0x0037, 0x0502);
+    delay_ms(50);
+    LCD_WriteReg(0x003A, 0x0302);
+    delay_ms(50);
+    LCD_WriteReg(0x003B, 0x0302);
+    delay_ms(50);
+    LCD_WriteReg(0x0023, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0024, 0x0000);
+    delay_ms(50);
+    LCD_WriteReg(0x0025, 0x8000);
+    delay_ms(50);
+    LCD_WriteReg(0x004f, 0);
+    LCD_WriteReg(0x004e, 0);
+  }
+
   /*---
-  if( DeviceCode == 0x9320 || DeviceCode == 0x9300 )
+  if (DeviceCode == 0x9320 || DeviceCode == 0x9300)
   {
     LCD_Code = ILI9320;
-    LCD_WriteReg(0x00,0x0000);
-    LCD_WriteReg(0x01,0x0100);  //Driver Output Contral
-    LCD_WriteReg(0x02,0x0700);  //LCD Driver Waveform Contral
-    LCD_WriteReg(0x03,0x1018);  //Entry Mode Set
-    
-    LCD_WriteReg(0x04,0x0000);  //Scalling Contral
-     LCD_WriteReg(0x08,0x0202);  //Display Contral
-    LCD_WriteReg(0x09,0x0000);  //Display Contral 3.(0x0000)
-    LCD_WriteReg(0x0a,0x0000);  //Frame Cycle Contal.(0x0000)
-    LCD_WriteReg(0x0c,(1<<0));  //Extern Display Interface Contral
-    LCD_WriteReg(0x0d,0x0000);  //Frame Maker Position
-    LCD_WriteReg(0x0f,0x0000);  //Extern Display Interface Contral 2.
-    
-    delay_ms(100);  //delay 100 ms    
-    LCD_WriteReg(0x07,0x0101);  //Display Contral
-    delay_ms(100);  //delay 100 ms    
-  
-    LCD_WriteReg(0x10,(1<<12)|(0<<8)|(1<<7)|(1<<6)|(0<<4));  //Power Control 1.(0x16b0)  
-    LCD_WriteReg(0x11,0x0007);                //Power Control 2
-    LCD_WriteReg(0x12,(1<<8)|(1<<4)|(0<<0));  //Power Control 3.(0x0138)  
-    LCD_WriteReg(0x13,0x0b00);                //Power Control 4
-    LCD_WriteReg(0x29,0x0000);                //Power Control 7
-    
-    LCD_WriteReg(0x2b,(1<<14)|(1<<4));
-      
-    LCD_WriteReg(0x50,0);       //Set X Start
-    LCD_WriteReg(0x51,239);      //Set X End
-    LCD_WriteReg(0x52,0);        //Set Y Start
-    LCD_WriteReg(0x53,319);      //Set Y End
-    
-    LCD_WriteReg(0x60,0x2700);  //Driver Output Control
-    LCD_WriteReg(0x61,0x0001);  //Driver Output Control
-    LCD_WriteReg(0x6a,0x0000);  //Vertical Srcoll Control
-    
-    LCD_WriteReg(0x80,0x0000);  //Display Position? Partial Display 1
-    LCD_WriteReg(0x81,0x0000);  //RAM Address Start? Partial Display 1
-    LCD_WriteReg(0x82,0x0000);  //RAM Address End-Partial Display 1
-    LCD_WriteReg(0x83,0x0000);  //Displsy Position? Partial Display 2
-    LCD_WriteReg(0x84,0x0000);  //RAM Address Start? Partial Display 2
-    LCD_WriteReg(0x85,0x0000);  //RAM Address End? Partial Display 2
-    
-    LCD_WriteReg(0x90,(0<<7)|(16<<0));  //Frame Cycle Contral.(0x0013)  
-    LCD_WriteReg(0x92,0x0000);  //Panel Interface Contral 2.(0x0000)
-    LCD_WriteReg(0x93,0x0001);  //Panel Interface Contral 3.
-    LCD_WriteReg(0x95,0x0110);  //Frame Cycle Contral.(0x0110)  
-    LCD_WriteReg(0x97,(0<<8));  
-    LCD_WriteReg(0x98,0x0000);  //Frame Cycle Contral
-  
-    LCD_WriteReg(0x07,0x0173);
+    LCD_WriteReg(0x00, 0x0000);
+    LCD_WriteReg(0x01, 0x0100); //Driver Output Contral
+    LCD_WriteReg(0x02, 0x0700); //LCD Driver Waveform Contral
+    LCD_WriteReg(0x03, 0x1018); //Entry Mode Set
+
+    LCD_WriteReg(0x04, 0x0000);   //Scalling Contral
+    LCD_WriteReg(0x08, 0x0202);   //Display Contral
+    LCD_WriteReg(0x09, 0x0000);   //Display Contral 3.(0x0000)
+    LCD_WriteReg(0x0a, 0x0000);   //Frame Cycle Contal.(0x0000)
+    LCD_WriteReg(0x0c, (1 << 0)); //Extern Display Interface Contral
+    LCD_WriteReg(0x0d, 0x0000);   //Frame Maker Position
+    LCD_WriteReg(0x0f, 0x0000);   //Extern Display Interface Contral 2.
+
+    delay_ms(100);              //delay 100 ms
+    LCD_WriteReg(0x07, 0x0101); //Display Contral
+    delay_ms(100);              //delay 100 ms
+
+    LCD_WriteReg(0x10, (1 << 12) | (0 << 8) | (1 << 7) | (1 << 6) | (0 << 4)); //Power Control 1.(0x16b0)
+    LCD_WriteReg(0x11, 0x0007);                                                //Power Control 2
+    LCD_WriteReg(0x12, (1 << 8) | (1 << 4) | (0 << 0));                        //Power Control 3.(0x0138)
+    LCD_WriteReg(0x13, 0x0b00);                                                //Power Control 4
+    LCD_WriteReg(0x29, 0x0000);                                                //Power Control 7
+
+    LCD_WriteReg(0x2b, (1 << 14) | (1 << 4));
+
+    LCD_WriteReg(0x50, 0);   //Set X Start
+    LCD_WriteReg(0x51, 239); //Set X End
+    LCD_WriteReg(0x52, 0);   //Set Y Start
+    LCD_WriteReg(0x53, 319); //Set Y End
+
+    LCD_WriteReg(0x60, 0x2700); //Driver Output Control
+    LCD_WriteReg(0x61, 0x0001); //Driver Output Control
+    LCD_WriteReg(0x6a, 0x0000); //Vertical Srcoll Control
+
+    LCD_WriteReg(0x80, 0x0000); //Display Position? Partial Display 1
+    LCD_WriteReg(0x81, 0x0000); //RAM Address Start? Partial Display 1
+    LCD_WriteReg(0x82, 0x0000); //RAM Address End-Partial Display 1
+    LCD_WriteReg(0x83, 0x0000); //Displsy Position? Partial Display 2
+    LCD_WriteReg(0x84, 0x0000); //RAM Address Start? Partial Display 2
+    LCD_WriteReg(0x85, 0x0000); //RAM Address End? Partial Display 2
+
+    LCD_WriteReg(0x90, (0 << 7) | (16 << 0)); //Frame Cycle Contral.(0x0013)
+    LCD_WriteReg(0x92, 0x0000);               //Panel Interface Contral 2.(0x0000)
+    LCD_WriteReg(0x93, 0x0001);               //Panel Interface Contral 3.
+    LCD_WriteReg(0x95, 0x0110);               //Frame Cycle Contral.(0x0110)
+    LCD_WriteReg(0x97, (0 << 8));
+    LCD_WriteReg(0x98, 0x0000); //Frame Cycle Contral
+
+    LCD_WriteReg(0x07, 0x0173);
   }
   ---*/
   /*---

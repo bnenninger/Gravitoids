@@ -459,21 +459,6 @@
               <FilePath>..\source_code\nunchuck.h</FilePath>
             </File>
             <File>
-              <FileName>Retarget.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\Retarget.c</FilePath>
-            </File>
-            <File>
-              <FileName>Serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\Serial.c</FilePath>
-            </File>
-            <File>
-              <FileName>Serial.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source_code\Serial.h</FilePath>
-            </File>
-            <File>
               <FileName>sound.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source_code\sound.c</FilePath>
@@ -512,6 +497,21 @@
               <FileName>vector_render_engine.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\source_code\vector_render_engine.h</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source_code\uart.h</FilePath>
+            </File>
+            <File>
+              <FileName>type.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source_code\type.h</FilePath>
             </File>
           </Files>
         </Group>

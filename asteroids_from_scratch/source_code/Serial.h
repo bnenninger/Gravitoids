@@ -16,10 +16,18 @@
 #ifndef __SERIAL_H
 #define __SERIAL_H
 
-extern void SER_init      (int uart_port, int baudrate);
-extern int  SER_getChar   (int uart);
-extern int  SER_getChar_nb(int uart);
-extern int  SER_putChar   (int uart, int c);
-extern void SER_putString (int uart, char *s);
+#define BUFSIZE 0x40
+
+// extern void SER_init      (int uart_port, int baudrate);
+// extern int  SER_getChar   (int uart);
+// extern int  SER_getChar_nb(int uart);
+// extern int  SER_putChar   (int uart, int c);
+// extern void SER_putString (int uart, char *s);
+
+void SER_init(int uart_port, int baudrate);
+int SER_getChar(int uart);
+int SER_getChar_nb(int uart);
+int SER_putChar(int uart, int c);
+void SER_putString(int uart, char *s);
 
 #endif

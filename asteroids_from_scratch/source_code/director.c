@@ -32,17 +32,25 @@
 // asteroid parameters
 #define ASTEROID_MAX_INIT_VELOCITY 4.0
 #define ASTEROID_LARGE_MAX_ROTATION_RATE 0.2
+#define ASTEROID_LARGE_MAX_NUM 6
 #define ASTEROID_SPAWN_COUNTER_MAX 90 // delay of 4.5 seconds
 #define ASTEROID_SPAWN_COUNTER_MIN 30 // delay of 1.5 seconds
+// black hole parameters
+#define BLACK_HOLE_SCALE 20
+#define BLACK_HOLE_MASS 20
+#define BLACK_HOLE_MAX_ROTATION_RATE 0.01
+#define BLACK_HOLE_MAX_NUMBER 9
+#define BLACK_HOLE_SPAWN_BATCH_NUM 3
 
 // game parameters
+#define MAX_LIVES 3
 #define GAME_SPACE_MAX_X 500
 #define GAME_SPACE_MAX_Y 500
 #define EXPLODING_GAME_CYCLES 40
 #define RESPAWNING_GAME_CYCLES 60
 
 int asteroid_kill_score[] = {30, 100, 100};
-int asteroid_masses[] = {7.0, 4.0, 1.0};
+int asteroid_masses[] = {4.0, 2.0, 1.0};
 float asteroid_sizes[] = {8.0, 6.0, 3.0};
 
 //game variables
@@ -57,6 +65,8 @@ uint16_t mode_countdown = RESPAWNING_GAME_CYCLES;
 // game object array
 struct GAME_OBJECT gravity_object_array[GAME_OBJECT_NUM];
 uint32_t gravity_object_counter = 0;
+uint32_t large_asteroid_counter = 0;
+uint32_t black_hole_counter = 0;
 struct GAME_OBJECT bullet_array[BULLET_NUM];
 uint32_t bullet_counter = 0;
 struct GAME_OBJECT particle_array[PARTICLE_NUM];
@@ -127,6 +137,10 @@ void kill_asteroid(int index)
 			spawn_asteroid(type + 1, offset, additional_velocity);
 		}
 	}
+	if (type == LARGE_ASTEROID)
+	{
+		large_asteroid_counter--;
+	}
 }
 
 int check_bullet_asteroid_collisions()
@@ -136,20 +150,23 @@ int check_bullet_asteroid_collisions()
 	int n = gravity_object_counter;
 	for (int i = 1; i < n; i++)
 	{
-		int bulletCollisionIndex = check_collisions(&gravity_object_array[i], bullet_array, bullet_counter);
-		if (bulletCollisionIndex > -1)
+		if (!gravity_object_array[i].indestructible)
 		{
-			//TODO increment score
-			// score += asteroid_kill_score[gravity_object_array[i].type];
-			//kill the bullet
-			kill_game_object(bullet_array, bullet_counter, bulletCollisionIndex);
-			bullet_counter--;
-			//kill the asteroid and spawn more if needed
-			kill_asteroid(i);
-			n--;
-			// as the number of game objects has decreased, decrement i to keep the for loop valid
-			// don't need to worry about any possible new asteroids, they are at the end of the array
-			i--;
+			int bulletCollisionIndex = check_collisions(&gravity_object_array[i], bullet_array, bullet_counter);
+			if (bulletCollisionIndex > -1)
+			{
+				//TODO increment score
+				// score += asteroid_kill_score[gravity_object_array[i].type];
+				//kill the bullet
+				kill_game_object(bullet_array, bullet_counter, bulletCollisionIndex);
+				bullet_counter--;
+				//kill the asteroid and spawn more if needed
+				kill_asteroid(i);
+				n--;
+				// as the number of game objects has decreased, decrement i to keep the for loop valid
+				// don't need to worry about any possible new asteroids, they are at the end of the array
+				i--;
+			}
 		}
 	}
 }
@@ -566,22 +583,59 @@ void initialize_object(uint32_t spriteIndex, float scale, float orientation, flo
 	}
 }
 
+uint8_t spawn_black_holes()
+{
+	// if the game is finished, refuse to spawn
+	if (state == GAME_OVER)
+	{
+		return 0;
+	}
+	int numSpawned = 0;
+	for (int i = 0; i < BLACK_HOLE_SPAWN_BATCH_NUM; i++)
+	{
+		if (((int)black_hole_counter < BLACK_HOLE_MAX_NUMBER) && ((int)gravity_object_counter < GAME_OBJECT_NUM))
+		{
+			gravity_object_array[gravity_object_counter] = (struct GAME_OBJECT){
+				.sprite_index = ASTEROID_INDEX,
+				.size = BLACK_HOLE_SCALE,
+				.orientation = ((float)rand()) / RAND_MAX * 2 * PI,
+				.rotation_rate = (((float)rand()) / RAND_MAX - 0.5) * BLACK_HOLE_MAX_ROTATION_RATE,
+				.displacement = random_vector(((float)rand() / RAND_MAX) * (GAME_SPACE_MAX_X - 240) + 240),
+				.velocity = (struct vector2d){.x = 0, .y = 0},
+				.acceleration = (struct vector2d){.x = 0, .y = 0},
+				.mass = BLACK_HOLE_MASS,
+				.movable = 0,
+				.visible = 1,
+				.lifespan = -1,
+				.indestructible = 1};
+			gravity_object_counter++;
+			black_hole_counter++;
+			numSpawned++;
+		}
+	}
+	return numSpawned;
+}
+
 void spawn_asteroid(object_type asteroid_type, struct vector2d displacement, struct vector2d velocity)
 {
-	gravity_object_array[gravity_object_counter] = (struct GAME_OBJECT){
-		.sprite_index = ASTEROID_INDEX,
-		.size = asteroid_sizes[asteroid_type],
-		.orientation = ((float)rand()) / RAND_MAX * 2 * PI,
-		.rotation_rate = (((float)rand()) / RAND_MAX - 0.5) * ASTEROID_LARGE_MAX_ROTATION_RATE * asteroid_type,
-		.displacement = displacement,
-		.velocity = velocity,
-		.acceleration = (struct vector2d){.x = 0, .y = 0},
-		.mass = asteroid_masses[asteroid_type],
-		.movable = 1,
-		.visible = 1,
-		.lifespan = -1,
-		.type = asteroid_type};
-	gravity_object_counter++;
+	if (gravity_object_counter < GAME_OBJECT_NUM)
+	{
+		gravity_object_array[gravity_object_counter] = (struct GAME_OBJECT){
+			.sprite_index = ASTEROID_INDEX,
+			.size = asteroid_sizes[asteroid_type],
+			.orientation = ((float)rand()) / RAND_MAX * 2 * PI,
+			.rotation_rate = (((float)rand()) / RAND_MAX - 0.5) * ASTEROID_LARGE_MAX_ROTATION_RATE * asteroid_type,
+			.displacement = displacement,
+			.velocity = velocity,
+			.acceleration = (struct vector2d){.x = 0, .y = 0},
+			.mass = asteroid_masses[asteroid_type],
+			.movable = 1,
+			.visible = 1,
+			.lifespan = -1,
+			.type = asteroid_type};
+		gravity_object_counter++;
+		large_asteroid_counter++;
+	}
 }
 
 // returns a random vector with the specified magnitude
@@ -601,7 +655,7 @@ void generate_fresh_asteroids()
 		// if there are large asteroid spots free
 		// slots free are equal to the number of game objects divided by 4 due to the possibility of generating 4 more game objects
 		// 1 is subtracted for the rocket
-		if (gravity_object_counter < GAME_OBJECT_NUM / 4 - 1)
+		if (gravity_object_counter < ASTEROID_LARGE_MAX_NUM)
 		{
 			// spawn an asteroid with random velocity just off screen
 			struct vector2d displacement = random_vector(240);
@@ -688,7 +742,7 @@ void game_state_handler()
 	}
 	else if (state == GAME_OVER)
 	{
-		buffer_text(100, 100, "GAME OVER");
+		buffer_text(160 - 10 * 4, 120 - 8, "GAME OVER");
 	}
 	// handle blinking in respawning state
 	if (state == RESPAWNING && mode_countdown % 5 == 0)
@@ -793,13 +847,13 @@ void control_input(int x, int y, uint8_t thrust, uint8_t fire)
 
 void start_game(void)
 {
-	lives = 3;
+	lives = MAX_LIVES;
 	score = 0;
 	gravity_object_counter = 0;
+	black_hole_counter = 0;
+	large_asteroid_counter = 0;
 	bullet_counter = 0;
 	particle_counter = 0;
-	
-	//TODO initialize starfield
 
 	struct vector2d dship;
 	dship.x = 0;
@@ -816,4 +870,24 @@ void start_game(void)
 	state = RESPAWNING;
 
 	asteroid_spawn_counter = ASTEROID_SPAWN_COUNTER_MIN; //rand() % (ASTEROID_SPAWN_COUNTER_MAX - ASTEROID_SPAWN_COUNTER_MIN) + ASTEROID_SPAWN_COUNTER_MIN;
+}
+
+int get_score()
+{
+	return score;
+}
+
+int get_lives()
+{
+	return lives;
+}
+
+int get_max_lives()
+{
+	return MAX_LIVES;
+}
+
+uint8_t is_game_over()
+{
+	return state == GAME_OVER;
 }
