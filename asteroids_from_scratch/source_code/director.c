@@ -1,16 +1,16 @@
 #include "LPC17xx.h"
 #include <stdio.h>
-#include "GLCD.h"
+// #include "GLCD.h"
 #include "director.h"
 //#include "display_engine.h"
 #include <stdlib.h>
-#include <time.h>
+// #include <time.h>
 #include <math.h>
 #include "sound.h"
 #include "vector.h"
 #include "string.h"
 #include "framebuffer.h"
-#include "Serial.h"
+// #include "Serial.h"
 
 #define PI 3.14159265358979323846264
 
@@ -18,8 +18,8 @@
 
 #define ROCKET_SCALE 1.0
 #define ROCKET_MASS 1.0
-#define ROCKET_THRUST 0.25
-#define ROCKET_ROTATION_RATE 0.002
+#define ROCKET_THRUST 0.5		   //0.25
+#define ROCKET_ROTATION_RATE 0.003 //0.002
 #define ROCKET_VELOCITY_DAMPING_FACTOR 0.99
 #define ROCKET_DEBRIS_MAX_ADDITIONAL_V 0.1
 #define ROCKET_DEBRIS_LIFESPAN_MIN 15
@@ -37,7 +37,7 @@
 #define ASTEROID_SPAWN_COUNTER_MIN 30 // delay of 1.5 seconds
 // black hole parameters
 #define BLACK_HOLE_SCALE 3
-#define BLACK_HOLE_MASS 20
+#define BLACK_HOLE_MASS 5
 #define BLACK_HOLE_MAX_ROTATION_RATE 0.01
 #define BLACK_HOLE_MAX_NUMBER 9
 #define BLACK_HOLE_SPAWN_BATCH_NUM 3
@@ -252,6 +252,8 @@ void update_all_velocities(void)
 		{
 			//update the velocity of this object
 			update_velocity(i);
+			//damp the velocity
+			multiply_vector(&gravity_object_array[i].velocity, ROCKET_VELOCITY_DAMPING_FACTOR);
 		}
 	}
 }
@@ -475,7 +477,7 @@ void update_objects(void)
 	gravity_object_array[0].displacement.x = 0;
 	gravity_object_array[0].displacement.y = 0;
 	//damp the rocket velocity
-	multiply_vector(&gravity_object_array[0].velocity, ROCKET_VELOCITY_DAMPING_FACTOR);
+	// multiply_vector(&gravity_object_array[0].velocity, ROCKET_VELOCITY_DAMPING_FACTOR);
 
 	// check if any bullets hit asteroids
 	check_bullet_asteroid_collisions();

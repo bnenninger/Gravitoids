@@ -1,3 +1,8 @@
+// COEN 4720 final project
+// author: Brendan Nenninger, Kassie Povinelli, and Carl Sustar
+//
+// rendering engine for drawing line-based sprites into a framebuffer
+
 #include "LPC17xx.h"
 #include "framebuffer.h"
 #include "vector.h"
@@ -7,12 +12,7 @@
 
 #define NUM_SPRITES 9
 
-// don't change this to index from zero
-// it doesn't work, no idea why
-// #define ROCKET_INDEX 1
-// #define ASTEROID_INDEX 2
-// #define ROCKET_FIRE_INDEX 3
-// #define BULLET_INDEX 4
+// enum for storing the indexes of sprites for different objects within the sprite array
 typedef enum
 {
 	ROCKET_INDEX,
@@ -25,21 +25,6 @@ typedef enum
 	STAR_INDEX,
 	BLACK_HOLE_INDEX
 } sprite_index;
-
-// struct for storing entity info
-// each object rendered in the game will be an entity
-// sprite is the sprite to be rendered for this entity
-// orientation and size control how the sprite is rendered
-// typedef struct
-// {
-//     int visible;  //0 = invisible, 1 = visible
-//     int to_clear; //by default 0, set to 1 so that display engine knows to clear
-//     int x;        //lower left-hand x-coord coordinate of sprite
-//     int y;        //lower left-hand y-coord coordinate of sprite
-//     float size;
-//     float orientation; //orientation in radians
-//     Sprite *sprite;
-// } Entity;
 
 void init_vector_render_engine();
 void draw_entity_to_buffer(uint32_t sprite_index, struct vector2d displacement, float scale, float orientation);

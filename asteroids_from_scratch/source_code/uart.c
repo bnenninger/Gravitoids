@@ -228,12 +228,7 @@ uint32_t UARTInit(uint32_t PortNum, uint32_t baudrate)
     // 64 of the user manual!
     LPC_SC->PCONP |= (1 << 24);
 
-    // (1) bits 23:20 of PINSEL0 are used to set the function of P0.11 and P0.10
-    // as RX and TX for UART2; see page 117 of the user manual! here, we
-    // use the trick with bitwise operators to set bits 23:24 to "0101" which
-    // according to the user manual must be set like that;
-    // LPC_PINCON->PINSEL0 &= ~0x00F00000;
-    // LPC_PINCON->PINSEL0 |= 0x00500000;    /* Enable RxD2 P0.11, TxD2 P0.10 */
+    // sets UART2 to pins 2.8 and 2.9, as pins 0.10 and 0.11 are used for the I2C input for the nunchuck
     LPC_PINCON->PINSEL4 |= (1 << 17); // Pin P2.8 used as TXD1 (Com2)
     LPC_PINCON->PINSEL4 |= (1 << 19); // Pin P2.9 used as RXD1 (Com2)
 

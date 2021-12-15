@@ -1,11 +1,14 @@
+// COEN 4720 final project
+// author: Brendan Nenninger, Kassie Povinelli, and Carl Sustar
+//
+// rendering engine for drawing line-based sprites into a framebuffer
 
 #include "vector_render_engine.h"
-#include "GLCD.h"
 #include <stdio.h>
 #include <math.h>
 #include "framebuffer.h"
 
-#define MAX_SPRITE_LINES 100
+#define MAX_SPRITE_LINES 10
 
 // struct for storing standard sprite info
 // sprites are intended to be used for multiple different entities
@@ -16,22 +19,19 @@ typedef struct
     // second two coordinates with two endpoints of second line, etc
     int *endpoint_x_data; //x coordinate for each line endpoint
     int *endpoint_y_data; //y coordinate for each line endpoint
+    // radius of the sprite, used for collision handling
     float radius
 } Sprite;
 
-Sprite sprites[NUM_SPRITES];
-
 float x_data_buffer[MAX_SPRITE_LINES * 2];
 float y_data_buffer[MAX_SPRITE_LINES * 2];
+
+Sprite sprites[NUM_SPRITES];
 
 #define ASTEROID_LINES 10
 int asteroid_x[] = {0, 2, 2, 2, 2, 4, 4, 3, 3, 1, 1, 0, 0, -2, -2, -4, -4, -3, -3, 0}; //20 points/10 lines long
 int asteroid_y[] = {4, 3, 3, 1, 1, 0, 0, -2, -2, -2, -2, -3, -3, -2, -2, 0, 0, 3, 3, 4};
 Sprite asteroid;
-
-// int rocket_x[] = {0, -12, -10, 10, 12, 0};
-// int rocket_y[] = {15, -15, -10, -10, -15, 15};
-// Sprite rocket;
 
 #define ROCKET_LINES 3
 #define ROCKET_FIRE_LINES 5
@@ -51,14 +51,18 @@ int black_hole_y[] = {0, 7, 7, 10, 10, 7, 7, 0, 0, -7, -7, -10, -10, -7, -7, 0};
 #define STAR_LINES 1
 int star[] = {0, 0};
 
+// calculates the largest radius of a sprite
+// the distance from the center to the furthest line endpoint
 float calculate_sprite_radius(int sprite_index)
 {
     int *x = sprites[sprite_index].endpoint_x_data;
     int *y = sprites[sprite_index].endpoint_y_data;
     // finds the maximum radius of a point from the center
     float max = 0.0;
+    // as sprites are not required to be continguous, every endpoint must be checked
     for (int i = 0; i < sprites[sprite_index].number_of_lines * 2; i++)
     {
+        // calculate the distance of the point from zero
         float value = sqrtf((float)(x[i] * x[i] + y[i] * y[i]));
         if (value > max)
         {
@@ -68,6 +72,7 @@ float calculate_sprite_radius(int sprite_index)
     return max;
 }
 
+// initializes the vector rendering engine
 void init_vector_render_engine()
 {
     // initialize all the sprites
@@ -149,6 +154,7 @@ void draw_entity_to_buffer(uint32_t sprite_index, struct vector2d displacement, 
     }
 }
 
+// returns the distance from the center of the sprite to the most distant line endpoint
 float get_sprite_radius(int sprite_index)
 {
     return sprites[sprite_index].radius;

@@ -6,6 +6,8 @@
 #ifndef __DIRECTOR_H__
 #define __DIRECTOR_H__
 
+#define DEBUG 0
+
 #define GAME_OBJECT_NUM 40
 #define BULLET_NUM 20
 #define PARTICLE_NUM 10

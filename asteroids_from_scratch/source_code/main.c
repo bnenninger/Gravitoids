@@ -36,6 +36,8 @@ char keyboard_input;
 
 int play_one_game()
 {
+    UARTSend(0, "New game started\n", 17);
+    UARTSend(2, "Enter 'black hole' to spawn black holes\n", 40);
     start_game();
     UART2_Count = 0;
     uint32_t prev10msCount = timer0_counter;
@@ -50,6 +52,8 @@ int play_one_game()
 
             prev10msCount = timer0_counter;
         }
+        // check if any complete UART messages have been received
+        // perform the corresponding action if any have
         if (UART2_Count != 0 && UART2_Buffer[UART2_Count - 1] == '\n')
         {
             // read the bluetooth input
@@ -63,7 +67,6 @@ int play_one_game()
             if (0 == strncmp(text_buffer, BLACK_HOLE_CODE, strlen(BLACK_HOLE_CODE)))
             {
                 int numSpawned = spawn_black_holes();
-                // int success = spawn_black_hole();
                 if (numSpawned)
                 {
                     int len = sprintf(text_buffer, "%d black holes spawned.\n", numSpawned);
@@ -94,7 +97,6 @@ int play_one_game()
             prevSecondCount = seconds_counter;
         }
     }
-    UARTSend(2, "out loop", 8);
     return get_score();
 }
 
@@ -151,6 +153,7 @@ int main(void)
 
         // play a game and record the score
         volatile int score = play_one_game();
+        UARTSend(0, "Game over\n", 10);
 
         // save the new high score if appropriate, and display the score to the user
         if (score > high_score)
@@ -159,11 +162,13 @@ int main(void)
             buffer_text(160 - 10 * 7, 120 + 8, "NEW HIGH SCORE!");
             int len = sprintf(text_buffer, "Score: %d", score);
             buffer_text_centered(160, 120 + 24, text_buffer);
+            UARTSend(0, text_buffer, len);
         }
         // if a highscore has not been achieved, display the player's score and the current highscore
         else
         {
             int len = sprintf(text_buffer, "Score: %d", score);
+            UARTSend(0, text_buffer, len);
             buffer_text_centered(160, 120 + 8, text_buffer);
             len = sprintf(text_buffer, "High Score: %d", high_score);
             buffer_text_centered(160, 120 + 24, text_buffer);

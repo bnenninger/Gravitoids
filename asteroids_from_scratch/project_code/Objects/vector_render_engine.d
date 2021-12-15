@@ -10,7 +10,6 @@
 .\objects\vector_render_engine.o: C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h
 .\objects\vector_render_engine.o: ..\source_code\framebuffer.h
 .\objects\vector_render_engine.o: ..\source_code\vector.h
-.\objects\vector_render_engine.o: ..\source_code\GLCD.h
 .\objects\vector_render_engine.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\vector_render_engine.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\vector_render_engine.o: ..\source_code\framebuffer.h
