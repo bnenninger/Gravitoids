@@ -26,3 +26,6 @@ Bluetooth module:
 Compilation:
 
 The executable size for this project is around 47 kB, considerably beyond the free limit for the Microvision compiler. Therefore, either a payed or evaluation license must be used to compile the software. However, this package includes precompiled code, so it should be possible to load onto a LandTiger board without any additional licensing needs.
+
+Source Code:
+All custom source code is stored in the source_code folder, and the Microvision project is stored in the project_code folder. This project references the code in the source code folder.
