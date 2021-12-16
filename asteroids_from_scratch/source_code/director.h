@@ -1,7 +1,15 @@
+// COEN 4720
+// Project
+// Gravitoids: Asteroids with Extra Physics and Multiplayer
+// Brendan Nenninger, Kassie Povinelli, Carl Sustar
+//
+// director.h
+// handles all gameplay
+// gravitational physics, collisions, bullet firing, thrust,
+// game score, applying player input, etc
+
 #include "LPC17xx.h"
-#include <math.h>
 #include "vector.h"
-#include "vector_render_engine.h"
 
 #ifndef __DIRECTOR_H__
 #define __DIRECTOR_H__
@@ -58,25 +66,16 @@ struct GAME_OBJECT
     uint8_t indestructible;
 };
 
-struct vector2d calculate_gravity(uint32_t affected_object_index, uint32_t cause_object_index);
-void update_acceleration(uint32_t object_index);
-void update_velocity(uint32_t object_index);
-// void update_displacement(uint32_t object_index);
-void update_displacement(struct GAME_OBJECT *obj);
-void update_sprite(uint32_t object_index);
-void update_objects(void);
-void initialize_object(uint32_t sprite_index, float scale, float orientation, float rotation_rate, struct vector2d *displacement, struct vector2d *velocity, struct vector2d *acceleration, float mass, uint8_t movable);
-uint8_t spawn_black_holes();
-
-void render_gamestate_to_LCD(void);
-void update_game_space(void);
-void print_object_values(void);
-void control_input(int x, int y, uint8_t thrust, uint8_t fire);
+// functions
 void start_game(void);
-
 int get_score();
 int get_lives();
 int get_max_lives();
 uint8_t is_game_over();
+void spawn_rocket();
+uint8_t spawn_black_holes();
+void spawn_asteroid(object_type asteroid_type, struct vector2d displacement, struct vector2d velocity);
+void update_game_space(void);
+void control_input(int x, int y, uint8_t thrust, uint8_t fire);
 
 #endif

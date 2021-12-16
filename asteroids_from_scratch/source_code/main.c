@@ -1,18 +1,21 @@
-//hw3
-//based on code provided by Dr. Cris Ababei at Marquette University
-//author: Kassie Povinelli
-//Snake game
-#include <stdio.h>
-//#include "LPC17xx.H"
+// COEN 4720
+// Project
+// Gravitoids: Asteroids with Extra Physics and Multiplayer
+// Brendan Nenninger, Kassie Povinelli, Carl Sustar
+//
+// main.c
+// handles initialization of all the board devices, taking input from the nunchuck,
+// timing game updates, and tracking high scores
+
+#include "LPC17xx.H"
 #include "GLCD.h"
-// #include "Serial.h"
 #include "uart.h"
-#include <string.h>
-#include <stdlib.h>
 #include "timer.h"
 #include "framebuffer.h"
 #include "director.h"
 #include "nunchuck.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #define BLACK_HOLE_CODE "black hole"
 
@@ -27,13 +30,13 @@ volatile uint32_t half_seconds_counter = 0;
 volatile uint32_t frame_counter;
 uint32_t prev_half_second = 0;
 
+// variable for tracking high score
 uint32_t high_score = 0;
 
+// text buffer for bluetooth and screen outputs
 char text_buffer[70];
-//control-related variables
-uint8_t direction;
-char keyboard_input;
 
+// function plays one game of gravitoids and returns the score
 int play_one_game()
 {
     UARTSend(0, "New game started\n", 17);
@@ -42,14 +45,18 @@ int play_one_game()
     UART2_Count = 0;
     uint32_t prev10msCount = timer0_counter;
     uint32_t prevSecondCount = seconds_counter;
+    // loops until the game is finished
     while (!is_game_over())
     {
+        // game cycle tuned to 20 milliseconds, attempting to reach 50 fps
         if (timer0_counter >= prev10msCount + 2)
         {
+            // for each game turn, read the nunchuck input, apply the input to the game, and update the game space
             NunchuckData ctrlInput = NunChuck_read();
             control_input(ctrlInput.joy_x_axis, ctrlInput.joy_y_axis, !ctrlInput.z_button, !ctrlInput.c_button);
-            update_game_space();
+            update_game_space(); // also includes render calls
 
+            // resets the tracker for the previous count so the next cycle will occur on the appropriate timeline
             prev10msCount = timer0_counter;
         }
         // check if any complete UART messages have been received
@@ -66,6 +73,8 @@ int play_one_game()
             // removes issues with what line ending is used
             if (0 == strncmp(text_buffer, BLACK_HOLE_CODE, strlen(BLACK_HOLE_CODE)))
             {
+                // spawns in black holes and transmits the number spawned to the bluetooth device
+                // otherwise, sends message that says no black holes could be spawned
                 int numSpawned = spawn_black_holes();
                 if (numSpawned)
                 {
@@ -82,6 +91,7 @@ int play_one_game()
                 UARTSend(2, "Invalid command.\n", 17);
             }
         }
+        // periodically transmits the game lives and score if still alive, or the score and a game over message if the game is over
         if (seconds_counter == prevSecondCount + 5)
         {
             if (is_game_over())
@@ -100,11 +110,9 @@ int play_one_game()
     return get_score();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// main program
-//
-///////////////////////////////////////////////////////////////////////////////
+// main function
+// initializes board
+// tracks high score and launches new games
 int main(void)
 {
     int i;
@@ -130,12 +138,8 @@ int main(void)
 
     buffer_text_centered(160, 50, "Press 'Z' to start.");
     buffer_to_LCD();
-    //start the game, director handles this, initializes the display engine, game-related variables, and sprites
-    // start_game();
 
-    // update_game_space();
-
-    int prevSecondCount = seconds_counter;
+    int prevSecondCount;
     NunchuckData ctrlInput;
     while (1)
     {
@@ -155,11 +159,12 @@ int main(void)
         volatile int score = play_one_game();
         UARTSend(0, "Game over\n", 10);
 
+        // display a score message, and the current high score if a new high score has not been set
         // save the new high score if appropriate, and display the score to the user
         if (score > high_score)
         {
             high_score = score;
-            buffer_text(160 - 10 * 7, 120 + 8, "NEW HIGH SCORE!");
+            buffer_text_centered(160, 120 + 8, "NEW HIGH SCORE!");
             int len = sprintf(text_buffer, "Score: %d", score);
             buffer_text_centered(160, 120 + 24, text_buffer);
             UARTSend(0, text_buffer, len);
@@ -174,11 +179,11 @@ int main(void)
             buffer_text_centered(160, 120 + 24, text_buffer);
         }
         buffer_to_LCD();
+
         // delay 3 seconds
         prevSecondCount = seconds_counter;
         while (seconds_counter < prevSecondCount + 3)
         {
-            volatile int i;
         }
 
         // show message for how to start a new game

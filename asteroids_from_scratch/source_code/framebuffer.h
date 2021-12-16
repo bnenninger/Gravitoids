@@ -1,3 +1,15 @@
+// COEN 4720
+// Project
+// Gravitoids: Asteroids with Extra Physics and Multiplayer
+// Brendan Nenninger, Kassie Povinelli, Carl Sustar
+//
+// framebuffer.h
+// This file includes code to operate a framebuffer.
+// This framebuffer uses two alternating frame buffers for the current and previous frame so that it
+// can only change the pixels that have been changed when writing a new frame, saving rendering time
+// and avoiding flickering. Each bit in the framebuffer represents the color to save memory, such that 1
+// is white (or whatever color is LIGHT_COLOR) and 0 is black/DARK_COLOR. This enables the framebuffer to
+// fit within the memory of the LPC1768.
 
 #include "LPC17xx.h"
 

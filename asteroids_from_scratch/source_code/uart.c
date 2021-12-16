@@ -1,3 +1,12 @@
+// COEN 4720
+// Project
+// Gravitoids: Asteroids with Extra Physics and Multiplayer
+// Brendan Nenninger, Kassie Povinelli, Carl Sustar
+//
+// uart.c
+// file unmodified from provided example except that TXD and RXD for UART 2
+// have been moved to pin 2.8 and 2.9, respectively
+
 #include <lpc17xx.h>
 #include "type.h"
 #include "uart.h"

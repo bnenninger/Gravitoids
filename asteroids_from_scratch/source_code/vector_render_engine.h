@@ -1,6 +1,9 @@
-// COEN 4720 final project
-// author: Brendan Nenninger, Kassie Povinelli, and Carl Sustar
+// COEN 4720
+// Project
+// Gravitoids: Asteroids with Extra Physics and Multiplayer
+// Brendan Nenninger, Kassie Povinelli, Carl Sustar
 //
+// vector_render_engine.h
 // rendering engine for drawing line-based sprites into a framebuffer
 
 #include "LPC17xx.h"

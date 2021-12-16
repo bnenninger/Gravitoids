@@ -1,6 +1,9 @@
-// COEN 4720 final project
-// author: Brendan Nenninger, Kassie Povinelli, and Carl Sustar
+// COEN 4720
+// Project
+// Gravitoids: Asteroids with Extra Physics and Multiplayer
+// Brendan Nenninger, Kassie Povinelli, Carl Sustar
 //
+// vector_render_engine.c
 // rendering engine for drawing line-based sprites into a framebuffer
 
 #include "vector_render_engine.h"
@@ -28,6 +31,7 @@ float y_data_buffer[MAX_SPRITE_LINES * 2];
 
 Sprite sprites[NUM_SPRITES];
 
+// endpoint data for the sprites
 #define ASTEROID_LINES 10
 int asteroid_x[] = {0, 2, 2, 2, 2, 4, 4, 3, 3, 1, 1, 0, 0, -2, -2, -4, -4, -3, -3, 0}; //20 points/10 lines long
 int asteroid_y[] = {4, 3, 3, 1, 1, 0, 0, -2, -2, -2, -2, -3, -3, -2, -2, 0, 0, 3, 3, 4};

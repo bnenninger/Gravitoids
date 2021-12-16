@@ -1,6 +1,21 @@
+// COEN 4720
+// Project
+// Gravitoids: Asteroids with Extra Physics and Multiplayer
+// Brendan Nenninger, Kassie Povinelli, Carl Sustar
+//
+// nunchuck.c
+// handles nunchuck input
+// based on code by Dr.Cris Ababei,
+// modified to be a separate file, rather than main, and to return a struct of the nunchuck inputs
 
 #include "nunchuck.h"
 #include "i2c.h"
+
+// Note: do not use I2C1 because P0.19 and P0.20 are used by GLCD!
+#define PORT_USED 2 // <--- Use I2C2, not I2C0 (used to work on older boards)!
+
+#define NUNCHUK_ADDRESS_SLAVE1 0xA4
+#define NUNCHUK_ADDRESS_SLAVE2 0xA5
 
 // function declarations;
 void NunChuck_phase1_init(void);
@@ -34,26 +49,13 @@ void delay_dirty(int n)
 
 void NunChuck_init(void)
 {
-	//init I2C device
-	//if (PORT_USED == 0)
-	//{
-	//	I2C0Init();
-	//}
-	//else if (PORT_USED == 1)
-	//{
-	//	I2C1Init(); // Note: do not use I2C1 because P0.19 and P0.20 are used by GLCD!
-	//}
-	//else if (PORT_USED == 2)
-	//{
-	//	I2C2Init();
-	//}
-	
-	I2C2Init(); 
-	//I2C1Init();
+	I2C2Init();
 
 	NunChuck_phase1_init();
 }
 
+// reads the control inputs from the nunchuck
+// returns those values as a struct
 NunchuckData NunChuck_read(void)
 {
 	// (a) reset stuff
@@ -157,19 +159,5 @@ void search_for_i2c_devices(void)
 		I2CMasterBuffer[PORT_USED][0] = address;
 		I2CEngine(PORT_USED);
 		delay_dirty(40);
-
-		// sprintf(text_buffer, "0x%02X", address);
-		// LCD_PutText(32, 32, (uint8_t *)text_buffer, Yellow, Black);
-		// if (ack_received > 0)
-		// {
-		// 	ack_received = 0; // reset;
-		// 	sprintf(text_buffer, "0x%02X", address);
-		// 	LCD_PutText(32, 48, (uint8_t *)text_buffer, Yellow, Black);
-		// 	sprintf(text_buffer, "0x%02X", I2CSlaveBuffer[PORT_USED][0]);
-		// 	LCD_PutText(32, 64, (uint8_t *)text_buffer, Yellow, Black);
-		// 	count++;
-		// }
 	}
-	// sprintf(text_buffer, "found: %02d", count);
-	// LCD_PutText(32, 80, (uint8_t *)text_buffer, Yellow, Black);
 }
