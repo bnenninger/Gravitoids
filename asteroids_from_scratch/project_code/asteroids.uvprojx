@@ -434,16 +434,6 @@
               <FilePath>..\source_code\i2c.h</FilePath>
             </File>
             <File>
-              <FileName>joystick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\joystick.c</FilePath>
-            </File>
-            <File>
-              <FileName>joystick.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source_code\joystick.h</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source_code\main.c</FilePath>
@@ -457,16 +447,6 @@
               <FileName>nunchuck.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\source_code\nunchuck.h</FilePath>
-            </File>
-            <File>
-              <FileName>sound.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\sound.c</FilePath>
-            </File>
-            <File>
-              <FileName>sound.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source_code\sound.h</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>

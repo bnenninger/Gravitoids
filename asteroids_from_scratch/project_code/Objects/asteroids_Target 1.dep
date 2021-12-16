@@ -62,17 +62,6 @@ I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Dev
 I (..\source_code\i2c.h)(0x5F641E16)
 I (..\source_code\GLCD.h)(0x619AE6B6)
 F (..\source_code\i2c.h)(0x5F641E16)()
-F (..\source_code\joystick.c)(0x619AE6B6)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\joystick.o --omf_browse .\objects\joystick.crf --depend .\objects\joystick.d)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\lpc17xx.h)(0x5E1E1914)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D49FB2)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5F644C5C)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_version.h)(0x60D49FB2)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_compiler.h)(0x60D49FB2)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_armcc.h)(0x60D49FB2)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\mpu_armv7.h)(0x60D49FB2)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h)(0x584993F2)
-I (..\source_code\joystick.h)(0x619AE6B6)
-F (..\source_code\joystick.h)(0x619AE6B6)()
 F (..\source_code\main.c)(0x61BAD16A)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.H)(0x5E1E1914)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D49FB2)
@@ -103,17 +92,6 @@ I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\mpu_armv7.h)(0x60D49FB2)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h)(0x584993F2)
 F (..\source_code\nunchuck.h)(0x61BAD316)()
-F (..\source_code\sound.c)(0x619AE6B6)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\sound.o --omf_browse .\objects\sound.crf --depend .\objects\sound.d)
-I (..\source_code\sound.h)(0x619AE6B6)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.h)(0x5E1E1914)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D49FB2)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5F644C5C)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_version.h)(0x60D49FB2)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_compiler.h)(0x60D49FB2)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_armcc.h)(0x60D49FB2)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\mpu_armv7.h)(0x60D49FB2)
-I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h)(0x584993F2)
-F (..\source_code\sound.h)(0x619AE6B6)()
 F (..\source_code\timer.c)(0x619AF169)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\timer.o --omf_browse .\objects\timer.crf --depend .\objects\timer.d)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\lpc17xx.h)(0x5E1E1914)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D49FB2)
