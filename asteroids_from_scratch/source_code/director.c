@@ -70,6 +70,7 @@ uint16_t mode_countdown = RESPAWNING_GAME_CYCLES;
 // game object array
 // NOTE: the rocket is the first element of this array, always
 struct GAME_OBJECT gravity_object_array[GAME_OBJECT_NUM];
+#define rocket gravity_object_array[0]
 uint32_t gravity_object_counter = 0;
 // tracks the number of large asteroids, used to limit the number so
 // as to limit the total number of possible child asteroids to prevent
@@ -440,13 +441,13 @@ void kill_asteroid(int index)
 void kill_rocket()
 {
 	// zeroes out the rocket acceleration
-	gravity_object_array[0].acceleration = (struct vector2d){.x = 0, .y = 0};
+	rocket.acceleration = (struct vector2d){.x = 0, .y = 0};
 	// spawn particles
 	spawn_rocket_particle(ROCKET_EXPLODE_1_INDEX);
 	spawn_rocket_particle(ROCKET_EXPLODE_2_INDEX);
 	spawn_rocket_particle(ROCKET_EXPLODE_3_INDEX);
 	// hide the rocket
-	gravity_object_array[0].visible = 0;
+	rocket.visible = 0;
 	lives--;
 }
 
@@ -510,7 +511,7 @@ void check_bullet_asteroid_collisions()
 // as this is only needed in some uses of spawn_rocket()
 void spawn_rocket()
 {
-	gravity_object_array[0] = (struct GAME_OBJECT){
+	rocket = (struct GAME_OBJECT){
 		.sprite_index = ROCKET_INDEX,
 		.size = ROCKET_SCALE,
 		.orientation = 0.0,
@@ -651,7 +652,7 @@ void spawn_rocket_particle(sprite_index sprite)
 	{
 		// start the particle object with a copy of the rocket, as the velocity and orientation should remain the same
 		// this is likely an inefficient way to do this, it would likely be better to just copy the velocity and orientation rather than the entire struct
-		particle_array[particle_counter] = gravity_object_array[0];
+		particle_array[particle_counter] = rocket;
 		// give the particle a random lifespan so the debris field disappears gradually
 		particle_array[particle_counter].lifespan = (uint16_t)(((float)rand()) / RAND_MAX * (ROCKET_DEBRIS_LIFESPAN_MAX - ROCKET_DEBRIS_LIFESPAN_MIN) + ROCKET_DEBRIS_LIFESPAN_MIN);
 		// set a small random rotation rate
@@ -676,15 +677,15 @@ void fire_bullet()
 		struct vector2d displacement;
 		displacement.x = 0;
 		displacement.y = -15;
-		rotate_vector(&displacement, gravity_object_array[0].orientation * 180 / PI);
-		add_vector(&displacement, &gravity_object_array[0].displacement);
+		rotate_vector(&displacement, rocket.orientation * 180 / PI);
+		add_vector(&displacement, &rocket.displacement);
 		// start the bullet with a forward velocity
 		struct vector2d velocity;
 		velocity.x = 0;
 		velocity.y = BULLET_VELOCITY;
-		rotate_vector(&velocity, gravity_object_array[0].orientation * 180 / PI + 180);
+		rotate_vector(&velocity, rocket.orientation * 180 / PI + 180);
 		// adds the velocity to the rocket velocity, helps make behavior more sane when firing while travelling at high velocity
-		add_vector(&velocity, &gravity_object_array[0].velocity);
+		add_vector(&velocity, &rocket.velocity);
 		bullet_array[bullet_counter]
 			.displacement = displacement;
 		bullet_array[bullet_counter].velocity = velocity;
@@ -708,38 +709,38 @@ void update_objects(void)
 	update_all_accelerations();
 	update_all_velocities();
 	update_all_displacements(gravity_object_array, gravity_object_counter);
-	center_around_rocket(&gravity_object_array[1], gravity_object_counter - 1, gravity_object_array[0].displacement);
+	center_around_rocket(&gravity_object_array[1], gravity_object_counter - 1, rocket.displacement);
 	wrap_around_gamespace(&gravity_object_array[1], gravity_object_counter - 1);
 	rotate_objects(gravity_object_array, gravity_object_counter);
 
 	// update the bullets
 	update_all_displacements(bullet_array, bullet_counter);
-	center_around_rocket(bullet_array, bullet_counter, gravity_object_array[0].displacement);
+	center_around_rocket(bullet_array, bullet_counter, rocket.displacement);
 	bullet_counter -= decay_objects(bullet_array, bullet_counter);
 	bullet_counter -= kill_outside_gamespace(bullet_array, bullet_counter);
 	rotate_objects(bullet_array, bullet_counter);
 
 	// update the particles
 	update_all_displacements(particle_array, particle_counter);
-	center_around_rocket(particle_array, particle_counter, gravity_object_array[0].displacement);
+	center_around_rocket(particle_array, particle_counter, rocket.displacement);
 	rotate_objects(particle_array, particle_counter);
 	particle_counter -= decay_objects(particle_array, particle_counter);
 	particle_counter -= kill_outside_gamespace(particle_array, particle_counter);
 
 	// update the starfield
-	center_around_rocket(star_array, star_counter, gravity_object_array[0].displacement);
+	center_around_rocket(star_array, star_counter, rocket.displacement);
 	wrap_around_gamespace(star_array, star_counter);
 
 	//zero out the rocket position
-	gravity_object_array[0].displacement.x = 0;
-	gravity_object_array[0].displacement.y = 0;
+	rocket.displacement.x = 0;
+	rocket.displacement.y = 0;
 	//damp the rocket velocity
 
 	// check if any bullets hit asteroids
 	check_bullet_asteroid_collisions();
 	// check for collisions between the rocket and asteroids
 	// only check when alive to give a respawn immunity period
-	if (state == ALIVE && -1 != check_collisions(&gravity_object_array[0], &gravity_object_array[1], gravity_object_counter - 1))
+	if (state == ALIVE && -1 != check_collisions(&rocket, &gravity_object_array[1], gravity_object_counter - 1))
 	{
 		kill_rocket();
 		set_state_exploding();
@@ -809,7 +810,7 @@ void game_state_handler()
 		if (state == RESPAWNING)
 		{
 			state = ALIVE;
-			gravity_object_array[0].visible = 1;
+			rocket.visible = 1;
 		}
 		// if rocket is done exploding, start it on respawning
 		else if (state == EXPLODING)
@@ -828,7 +829,7 @@ void game_state_handler()
 	// handle blinking in respawning state
 	if (state == RESPAWNING && mode_countdown % 5 == 0)
 	{
-		gravity_object_array[0].visible = !gravity_object_array[0].visible;
+		rocket.visible = !rocket.visible;
 	}
 }
 
@@ -858,26 +859,26 @@ void control_input(int x, int y, uint8_t thrust, uint8_t fire)
 		// allow some dead spot in middle, outside of that range rotate it
 		if (x > 30 || x < -30)
 		{
-			gravity_object_array[0].orientation += x * ROCKET_ROTATION_RATE;
+			rocket.orientation += x * ROCKET_ROTATION_RATE;
 		}
 
 		// apply thrust if the thrust button is pressed
 		if (thrust)
 		{
 			//switches sprite to the rocket with the engine on
-			gravity_object_array[0].sprite_index = ROCKET_FIRE_INDEX;
+			rocket.sprite_index = ROCKET_FIRE_INDEX;
 			// applies thrust to the rocket acceleration
 			struct vector2d deltaV;
 			//create a vector with the magnitude of the thrust
 			deltaV.x = 0;
 			deltaV.y = ROCKET_THRUST;
-			rotate_vector(&deltaV, gravity_object_array[0].orientation * 180 / PI + 180);
-			add_vector(&gravity_object_array[0].velocity, &deltaV);
+			rotate_vector(&deltaV, rocket.orientation * 180 / PI + 180);
+			add_vector(&rocket.velocity, &deltaV);
 		}
 		// otherwise set/switch back to the regular rocket sprite
 		else
 		{
-			gravity_object_array[0].sprite_index = ROCKET_INDEX;
+			rocket.sprite_index = ROCKET_INDEX;
 		}
 
 		// fire bullet if the "fire" button is pressed
