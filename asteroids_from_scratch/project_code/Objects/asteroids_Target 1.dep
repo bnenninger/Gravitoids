@@ -62,7 +62,7 @@ I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Dev
 I (..\source_code\i2c.h)(0x5F641E16)
 I (..\source_code\GLCD.h)(0x619AE6B6)
 F (..\source_code\i2c.h)(0x5F641E16)()
-F (..\source_code\main.c)(0x61BAD16A)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (..\source_code\main.c)(0x61BAD950)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.H)(0x5E1E1914)
 I (C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D49FB2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5F644C5C)
@@ -80,6 +80,7 @@ I (..\source_code\vector.h)(0x61BAD499)
 I (..\source_code\nunchuck.h)(0x61BAD316)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5F644C5C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5F644C5C)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5F644C6A)
 F (..\source_code\nunchuck.c)(0x61BAD3AC)(--c99 -c --cpu Cortex-M3 -g -W -O0 --apcs=interwork --split_sections-I.\RTE\Device\LPC1768-I.\RTE\_Target_1-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include"-I"C:\Users\Brendan Nenninger\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\RTE_Driver"-D__UVISION_VERSION="532" -D_RTE_ -DLPC175x_6x -D_RTE_-o .\objects\nunchuck.o --omf_browse .\objects\nunchuck.crf --depend .\objects\nunchuck.d)
 I (..\source_code\nunchuck.h)(0x61BAD316)
 I (..\source_code\i2c.h)(0x5F641E16)
