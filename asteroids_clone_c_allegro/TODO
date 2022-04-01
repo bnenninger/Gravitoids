@@ -1,4 +1,0 @@
-- BUGS
-  - Collision detection is still a bit jenky
-  - Asteroids jump across the screen in a not very smooth way
-  - Once killed, the player may end up inside an asteroid again
