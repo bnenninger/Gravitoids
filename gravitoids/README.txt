@@ -5,6 +5,8 @@ Brendan Nenninger, Kassie Povinelli, Carl Sustar
 
 This project is largely as Asteroids game clone, but we have added a scrolling, wraparound play space and gravity for the asteroids. It is also possible for an outside player to connect to the game via Bluetooth to see the score and number of lives the player has left, in addition to being able to spawn in black holes.
 
+The game is played on a LandTiger board with an LPC1768 microcontroller.
+
 Controls:
 The game is controlled via a Wii Nunchuck. Left and right presses on the joystick are used to rotate the spaceship. The 'z' button is used to fire the spaceship's engine, and the 'c' button fires bullets to destroy asteroids.
 A person connected via a Bluetooth terminal can spawn asteroids by entering "black hole"
